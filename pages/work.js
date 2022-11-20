@@ -47,10 +47,6 @@ export default function work() {
     return () => clearInterval(countdown);
   }, [day, hour, minutes, seconds, today]);
 
-  useEffect(() => {
-    today;
-  }, []);
-
   return (
     <>
       <TitleManager pageTitle="work" />
