@@ -1,15 +1,26 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import TitleManager from "../components/TitleManager";
 
-export default function Home(collectionList, props) {
+export default function Home(collections, props) {
+  const [latestBuying, setLatestBuying] = useState([
+    "asdfasdf",
+    "asdfasdf",
+    "asdfasdf",
+    "asdfasdf",
+    "asdfasdf",
+    "asdfasdf",
+    "asdfasdf",
+    "asdfasdf",
+  ]);
   return (
     <>
       <TitleManager pageTitle="home" />
       {/* <div className="fixed top-10 -left-80 rounded-lg bg-teal-200 w-[500px] h-[300px] -rotate-45 z-0" /> */}
       <section className="text-gray-600 body-font z-10 relative">
-        <div className="flex items-center justify-center mt-2 border-4 border-slate-200 container mx-auto">
+        <div className="INFO flex items-center justify-center mt-2 container mx-auto">
           <Image
             src="/Defendao_Logo.png"
             width={180}
@@ -23,22 +34,53 @@ export default function Home(collectionList, props) {
               We are the DAO defending NFT prices.
             </h1>
             <p className="text-xl font-semibold mb-8 leading-relaxed">
-              One of the DAO members will purchase the NFT that came out as a
-              quick sale through a decentralized and perfect random method.
+              One of the DAO members will purchase the NFT that come as a quick
+              sale with randomly.
             </p>
           </div>
         </div>
       </section>
-      <div className="mx-auto container border-4 border-slate-200 mt-2 p-8 h-60">
-        Latest Tx
-        <div>최근 거래된 NFT 카드들 오른쪽으로 자동 롤링</div>
-      </div>
+      <section className="mx-auto container mt-2 p-8">
+        <p className="text-3xl font-extrabold m-2">Latest Tx</p>
+        <div className="border-2 dark:border-slate-800 border-slate-600 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
+          {latestBuying.map((nftList) => (
+            <div className="NFTCARDS relative hover:shadow-xl overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52">
+              <div className="flex flex-col asepct-square rounded-t-md overflow-hidden items-center">
+                <Image
+                  src="https://global-uploads.webflow.com/6241bcd9e666c1514401461d/6300caa62713a31a40fbee12_uVorQzNs.jpg"
+                  alt="NFT Img"
+                  className="object-cover block hover:scale-105 hover:rounded-t-xl group-hover:rounded-t-xl group-hover:scale-105 transition-all duration-300"
+                  width={250}
+                  height={250}
+                />
+              </div>
+              <div className="ICON -mt-3 flex justify-end bg-slate-300 dark:bg-slate-700">
+                <span className="bg-slate-400 dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
+                  Icons
+                </span>
+              </div>
+              <div className="TEXTBOX px-3 py-2 space-y-3 bg-slate-300 dark:bg-slate-700">
+                <div className="flex text-xs items-center">
+                  <span className="block text-sm font-medium truncate ... whitespace-pre">
+                    {nftList}
+                  </span>
+                </div>
+                <div className="flex text-lg items-center">
+                  <span className="block text-sm font-medium truncate ... whitespace-pre">
+                    0.124124 ETH
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <div className="p-8 rounded-md w-full container mx-auto border-4 border-slate-200 mt-4">
+      <div className="p-8 rounded-md w-full container mx-auto mt-4">
         <div className="flex items-center justify-between pb-6">
           <div>
-            <h2 className="text-gray-600 font-semibold">NFT DefenDao List</h2>
-            <span className="text-xs">All products item</span>
+            <p className="text-3xl font-extrabold m-2">NFT DefenDao List</p>
+            <span className="text-lg font-semibold m-2">All products item</span>
           </div>
           <div className="flex items-center justify-between w-max">
             <div className="flex bg-gray-50 dark:bg-gray-700 items-center p-2 rounded-md w-96">
@@ -268,33 +310,29 @@ export default function Home(collectionList, props) {
           </div>
         </div>
       </div>
-      <div>
-        {collectionList.collectionList.map((colList) => (
-          <div>{colList.name}</div>
-        ))}
-      </div>
+      <div></div>
     </>
   );
 }
 
 // 빌드 타임에 호출
-export async function getServerSideProps() {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-    },
-  };
+// export async function getServerSideProps() {
+//   const options = {
+//     method: "GET",
+//     headers: {
+//       accept: "application/json",
+//     },
+//   };
 
-  const res = await fetch(
-    "https://api.opensea.io/api/v1/collections?offset=0&limit=100",
-    options
-  );
-  const collections = await res.json();
-  const collectionList = collections.collections;
-  // console.log(collections);
+//   const res = await fetch(
+//     "https://api.opensea.io/api/v1/collections?offset=0&limit=100",
+//     options
+//   );
+//   const collections = await res.json();
+//   const collectionList = collections.collections;
+//   // console.log(collections);
 
-  return {
-    props: { collectionList },
-  };
-}
+//   return {
+//     props: { collectionList },
+//   };
+// }
