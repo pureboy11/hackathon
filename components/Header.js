@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { ethers } from "ethers";
 import Darkmode from "./Darkmode";
 
 export default function Header() {
@@ -39,6 +40,10 @@ export default function Header() {
     return () => {
       window.removeEventListener("scroll", listener);
     };
+  }, []);
+
+  useEffect(() => {
+    ethers;
   }, []);
 
   return (
