@@ -2,7 +2,7 @@ import TitleManager from "../components/TitleManager";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export default function work() {
+export default function Work() {
   const today = new Date();
   const targetDate = new Date("2022-12-04T09:00:00+0900");
   const dis = targetDate.getTime() - today.getTime();
@@ -18,34 +18,34 @@ export default function work() {
   const [minutes, setMinutes] = useState(d);
   const [seconds, setSeconds] = useState(s);
 
-  // useEffect(() => {
-  //   const countdown = setInterval(() => {
-  //     if (parseInt(seconds) > 0) setSeconds(parseInt(seconds) - 1);
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      if (parseInt(seconds) > 0) setSeconds(parseInt(seconds) - 1);
 
-  //     if (parseInt(seconds) === 0) {
-  //       if (parseInt(minutes) === 0) {
-  //         if (parseInt(hour) === 0) {
-  //           if (parseInt(day) === 0) {
-  //             clearInterval(countdown);
-  //           } else {
-  //             setDay(parseInt(day) - 1);
-  //             setHour(23);
-  //             setMinutes(59);
-  //             setSeconds(59);
-  //           }
-  //         } else {
-  //           setHour(parseInt(hour) - 1);
-  //           setMinutes(59);
-  //           setSeconds(59);
-  //         }
-  //       } else {
-  //         setMinutes(parseInt(minutes) - 1);
-  //         setSeconds(59);
-  //       }
-  //     }
-  //   }, 1000);
-  //   return () => clearInterval(countdown);
-  // }, [day, hour, minutes, seconds, today]);
+      if (parseInt(seconds) === 0) {
+        if (parseInt(minutes) === 0) {
+          if (parseInt(hour) === 0) {
+            if (parseInt(day) === 0) {
+              clearInterval(countdown);
+            } else {
+              setDay(parseInt(day) - 1);
+              setHour(23);
+              setMinutes(59);
+              setSeconds(59);
+            }
+          } else {
+            setHour(parseInt(hour) - 1);
+            setMinutes(59);
+            setSeconds(59);
+          }
+        } else {
+          setMinutes(parseInt(minutes) - 1);
+          setSeconds(59);
+        }
+      }
+    }, 1000);
+    return () => clearInterval(countdown);
+  }, [day, hour, minutes, seconds, today]);
 
   return (
     <>
