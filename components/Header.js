@@ -29,18 +29,18 @@ export default function Header() {
     setWalletType("eth");
   };
 
-  useEffect(() => {
-    const listener = () => {
-      if (window.scrollY > 140) {
-        setAnimateHeader(true);
-      } else setAnimateHeader(false);
-    };
-    window.addEventListener("scroll", listener);
+  // useEffect(() => {
+  //   const listener = () => {
+  //     if (window.scrollY > 140) {
+  //       setAnimateHeader(true);
+  //     } else setAnimateHeader(false);
+  //   };
+  //   window.addEventListener("scroll", listener);
 
-    return () => {
-      window.removeEventListener("scroll", listener);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("scroll", listener);
+  //   };
+  // }, []);
 
   useEffect(() => {
     ethers;
@@ -49,8 +49,7 @@ export default function Header() {
   return (
     <>
       <div
-        className={`sticky top-0 z-20 flex py-3 shadow-md my-auto bg-white dark:bg-[#202225] header ${
-          animateHeader && "header--animated hidden duration-700"
+        className={`sticky top-0 z-20 flex py-3 shadow-md my-auto bg-white dark:bg-[#1B1E25] header"
         }`}
       >
         <Link href="/" id="link" className="mx-5 my-auto text-gray-400">

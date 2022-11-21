@@ -23,7 +23,7 @@ export default function DefenDaoDetail(props) {
     <>
       <TitleManager pageTitle="CollectionNAME" />
       <div className="dark:text-slate-300 ml-5 mt-5 pb-2">{` TAG > TAG > TAG `}</div>
-      <div className="relative mx-7 lg:mx-20 h-screen">
+      <div className="relative mx-3 lg:mx-20 h-screen">
         <section className="INFO h-36 mb-10">
           <div className="grid grid-cols-6">
             <div className="col-span-4">
@@ -51,15 +51,16 @@ export default function DefenDaoDetail(props) {
             My Bids
           </button>
           <button className="p-4 mr-4 mt-10 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md">
-            Recent Liquidations
+            Recent Liq
           </button>
         </section>
-        <section className="lg:grid lg:grid-cols-6 ">
+        <section className="lg:grid lg:grid-cols-6">
           <div className="col-span-4 m-4 h-[300px] lg:h-[600px]">
             <Chart className="" />
           </div>
-          <div className="col-span-2 border border-slate-200 m-4 h-[600px]">
+          <div className="col-span-2 border border-slate-200 m-4 lg:h-[600px]">
             ContracT 제출
+            <div>sadfsdaf</div>
           </div>
         </section>
       </div>

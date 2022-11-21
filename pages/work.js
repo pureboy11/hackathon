@@ -66,11 +66,11 @@ export default function Work() {
           >
             <div className="text-lg font-extrabold">Metaverse Hackathon</div>
           </Link>
-          <div className="mx-20">
+          <div className="mx-3 lg:mx-10">
             <div className="text-right mt-5">
               D- day : {day}일 {hour} 시간 {minutes} 분 {seconds} 초
             </div>
-            <div className="w-full bg-slate-300 h-2 rounded-md  mt-5">
+            <div className="w-full bg-slate-300 h-2 rounded-md mt-5">
               <div className="flex justify-between pt-4 relative">
                 <div>
                   <div className="flex flex-col text-left">
