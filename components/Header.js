@@ -49,8 +49,8 @@ export default function Header() {
   return (
     <>
       <div
-        className={`sticky top-0 z-20 flex py-3 shadow-md my-auto bg-white dark:bg-slate-900 header ${
-          animateHeader && "header--animated hidden"
+        className={`sticky top-0 z-20 flex py-3 shadow-md my-auto bg-white dark:bg-[#202225] header ${
+          animateHeader && "header--animated hidden duration-700"
         }`}
       >
         <Link href="/" id="link" className="mx-5 my-auto text-gray-400">
@@ -61,7 +61,7 @@ export default function Header() {
         </Link>
         <div className="ml-auto mr-4 flex items-center">
           <button
-            className="bg-orange-500 text-white active:bg-blueGray-600 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 mr-4"
+            className="bg-orange-500 text-white active:bg-blueGray-600 text-xs font-bold uppercase px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 mr-4"
             type="button"
             onClick={connectWallet}
           >

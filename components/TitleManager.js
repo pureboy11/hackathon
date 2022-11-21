@@ -1,11 +1,11 @@
 import Head from "next/head";
 
-const siteTitle = "WalletViewer";
+const siteTitle = "DefenDAO";
 
 export default function TitleManager(props) {
   return (
     <Head>
-      <title>{props.pageTitle + "-" + siteTitle}</title>
+      <title>{siteTitle + " |  " + props.pageTitle}</title>
       <meta name="description" content={props.pageDescrption} />
     </Head>
   );

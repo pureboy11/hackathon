@@ -1,7 +1,7 @@
 import TitleManager from "../components/TitleManager";
 import { Doughnut } from "react-chartjs-2";
 
-export default function dao() {
+export default function DefenDao() {
   return (
     <>
       <TitleManager pageTitle="dao" />

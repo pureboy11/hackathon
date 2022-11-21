@@ -1,12 +1,13 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import TitleManager from "../components/TitleManager";
 
 export default function Home(collections, props) {
   const [latestBuying, setLatestBuying] = useState([
-    "asdfasdf",
+    "NFT NAME",
     "asdfasdf",
     "asdfasdf",
     "asdfasdf",
@@ -15,6 +16,9 @@ export default function Home(collections, props) {
     "asdfasdf",
     "asdfasdf",
   ]);
+
+  const [showDAO, setShowDao] = useState(false);
+  const router = useRouter;
 
   return (
     <>
@@ -41,41 +45,47 @@ export default function Home(collections, props) {
           </div>
         </div>
       </section>
-      <section className="mx-auto container mt-2 p-8">
-        <p className="text-3xl font-extrabold m-2">Latest Tx</p>
-        <div className="border-2 dark:border-slate-800 border-slate-600 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
+      <section className="mx-auto container p-8">
+        <p className="text-3xl font-extrabold m-2">Latest Transfers</p>
+        <div className="border-2 dark:border-slate-800 border-slate-100 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
           {latestBuying.map((nftList, id) => (
-            <div
-              className="NFTCARDS relative hover:shadow-xl overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
-              key={id}
-            >
-              <div className="flex flex-col asepct-square rounded-t-md overflow-hidden items-center">
-                <Image
-                  src="https://global-uploads.webflow.com/6241bcd9e666c1514401461d/6300caa62713a31a40fbee12_uVorQzNs.jpg"
-                  alt="NFT Img"
-                  className="object-cover block hover:scale-105 hover:rounded-t-xl group-hover:rounded-t-xl group-hover:scale-105 transition-all duration-300"
-                  width={250}
-                  height={250}
-                />
-              </div>
-              <div className="ICON -mt-3 flex justify-end bg-slate-300 dark:bg-slate-700">
-                <span className="bg-slate-400 dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
-                  Icons
-                </span>
-              </div>
-              <div className="TEXTBOX px-3 py-2 space-y-3 bg-slate-300 dark:bg-slate-700">
-                <div className="flex text-xs items-center">
-                  <span className="block text-sm font-medium truncate ... whitespace-pre">
-                    {nftList}
+            <Link key={nftList.id} href={`/dao/${nftList.id}`}>
+              <div
+                className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
+                key={id}
+              >
+                <div className="flex flex-col asepct-square rounded-t-md overflow-hidden items-center">
+                  <Image
+                    src="https://global-uploads.webflow.com/6241bcd9e666c1514401461d/6300caa62713a31a40fbee12_uVorQzNs.jpg"
+                    alt="NFT Img"
+                    className="object-cover block hover:scale-105 hover:rounded-t-xl group-hover:rounded-t-xl group-hover:scale-105 transition-all duration-300"
+                    width={250}
+                    height={250}
+                  />
+                </div>
+                <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
+                  <span className="bg-slate-400 dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
+                    Icons
                   </span>
                 </div>
-                <div className="flex text-lg items-center">
-                  <span className="block text-sm font-medium truncate ... whitespace-pre">
-                    0.124124 ETH
-                  </span>
+                <div className="TEXTBOX px-2 py-1 space-y-2 bg-slate-100 dark:bg-slate-700">
+                  <div className="flex text-xs items-center">
+                    <span className="block text-lg font-semibold truncate ... whitespace-pre">
+                      {nftList}
+                    </span>
+                  </div>
+                  <div className="flex text-lg items-center pb-7">
+                    <span className="block text-sm font-medium truncate ... whitespace-pre">
+                      0.124124 ETH
+                    </span>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
+                  Go to Dao
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -181,7 +191,7 @@ export default function Home(collections, props) {
                       </span>
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                      <Link href="/dao">
+                      <Link href="/dao/123">
                         <button className="bg-slate-500 rounded-xl p-2 w-24">
                           <p>Enter</p>
                         </button>

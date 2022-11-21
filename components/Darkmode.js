@@ -7,7 +7,7 @@ export default function Darkmode() {
     <>
       <button
         className="inline-flex items-center
-                            border-0 p-1
+                            border-0 p-2
                             rounded-full
                             focus:outline-none
                             bg-gray-100
