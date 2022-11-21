@@ -45,13 +45,13 @@ export default function Work() {
       }
     }, 1000);
     return () => clearInterval(countdown);
-  }, [day, hour, minutes, seconds, today]);
+  }, [day, hour, minutes, seconds, today, dis]);
 
   return (
     <>
       <TitleManager pageTitle="work" />
       <div className="container h-screen mx-auto">
-        <section id="dDayCalendar" className="mx-5">
+        <div id="dDayCalendar" className="mx-5">
           <Link
             href="https://www.encode.club/evmoscovalent-hack"
             target="_blank"
@@ -80,29 +80,29 @@ export default function Work() {
                     </div>
                   </div>
                 </div>
-                <button className="">
+                <div className="">
                   <button className="absolute -top-1 bg-orange-400 rounded-full w-5 h-5"></button>
                   <button className="absolute -top-1 bg-orange-400 rounded-full w-5 h-5 animate-ping"></button>
                   <span>Stage1</span>
-                </button>
-                <button>
+                </div>
+                <div>
                   <button className="absolute -top-1 bg-orange-400 rounded-full w-5 h-5"></button>
                   <span>Stage2</span>
-                </button>
-                <button>
+                </div>
+                <div>
                   <button className="absolute -top-1 bg-orange-400 rounded-full w-5 h-5"></button>
                   <span>Stage3</span>
-                </button>
-                <button>
+                </div>
+                <div>
                   <button className="absolute -top-1 bg-orange-400 rounded-full w-5 h-5"></button>
                   <span>Stage4</span>
-                </button>
-                <button className="flex flex-col text-right">
+                </div>
+                <div className="flex flex-col text-right">
                   <span>제출</span>
                   <div className="text-center bg-slate-300 dark:bg-slate-700 rounded-lg p-2 text-sm">
-                    12월 4일 (일)
+                    12월 4일 (금)
                   </div>
-                </button>
+                </div>
               </div>
               <div className="mt-20 font-extrabold text-2xl"> To do list</div>
               <div>
@@ -144,7 +144,7 @@ export default function Work() {
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </>
   );
