@@ -61,7 +61,12 @@ export const data = {
 export default function Chart() {
   return (
     <>
-      <Bar options={options} data={data} />
+      <Bar
+        data={data}
+        width={200}
+        height={400}
+        options={{ maintainAspectRatio: false }}
+      />
     </>
   );
 }

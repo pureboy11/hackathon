@@ -23,7 +23,6 @@ export default function Home(collections, props) {
   return (
     <>
       <TitleManager pageTitle="home" />
-      {/* <div className="fixed top-10 -left-80 rounded-lg bg-teal-200 w-[500px] h-[300px] -rotate-45 z-0" /> */}
       <section className="text-gray-600 body-font z-10 relative">
         <div className="INFO flex items-center justify-center mt-2 container mx-auto">
           <Image

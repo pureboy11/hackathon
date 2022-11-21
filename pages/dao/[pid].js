@@ -22,9 +22,9 @@ export default function DefenDaoDetail(props) {
   return (
     <>
       <TitleManager pageTitle="CollectionNAME" />
-      <div className="relative h-full mx-10">
-        <div className="dark:text-slate-300 mt-5 pb-2">{` TAG > TAG > TAG `}</div>
-        <section className="INFO h-36 border border-slate-100">
+      <div className="dark:text-slate-300 ml-5 mt-5 pb-2">{` TAG > TAG > TAG `}</div>
+      <div className="relative mx-7 lg:mx-20 h-screen">
+        <section className="INFO h-36 mb-10">
           <div className="grid grid-cols-6">
             <div className="col-span-4">
               <div className="flex items-center justify-start m-2">
@@ -44,21 +44,21 @@ export default function DefenDaoDetail(props) {
           </div>
         </section>
         <section className="gap-5">
-          <button className="p-4 mr-4 mt-10 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md hover:shadow-xl">
+          <button className="p-4 mr-4 mt-10 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md">
             Summary
           </button>
-          <button className="p-4 mr-4 mt-10 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md hover:shadow-xl">
+          <button className="p-4 mr-4 mt-10 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md">
             My Bids
           </button>
-          <button className="p-4 mr-4 mt-10 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md hover:shadow-xl">
+          <button className="p-4 mr-4 mt-10 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md">
             Recent Liquidations
           </button>
         </section>
-        <section className="grid grid-cols-6 border border-slate-100">
-          <div className="col-span-4 border border-yellow-100 m-4">
+        <section className="lg:grid lg:grid-cols-6 ">
+          <div className="col-span-4 m-4 h-[300px] lg:h-[600px]">
             <Chart className="" />
           </div>
-          <div className="col-span-2 border border-yellow-100 m-4">
+          <div className="col-span-2 border border-slate-200 m-4 h-[600px]">
             ContracT 제출
           </div>
         </section>

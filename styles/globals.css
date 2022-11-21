@@ -6,6 +6,10 @@
   @apply bg-white dark:bg-[#202225];
 }
 
+body[data-theme="dark"] {
+  --bg: #202225;
+}
+
 .header--animated {
   background: rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
