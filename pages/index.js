@@ -324,7 +324,6 @@ export default function Home(collections, props) {
           </div>
         </div>
       </div>
-      <div></div>
     </>
   );
 }
