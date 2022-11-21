@@ -15,6 +15,7 @@ export default function Home(collections, props) {
     "asdfasdf",
     "asdfasdf",
   ]);
+
   return (
     <>
       <TitleManager pageTitle="home" />
@@ -43,8 +44,11 @@ export default function Home(collections, props) {
       <section className="mx-auto container mt-2 p-8">
         <p className="text-3xl font-extrabold m-2">Latest Tx</p>
         <div className="border-2 dark:border-slate-800 border-slate-600 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
-          {latestBuying.map((nftList) => (
-            <div className="NFTCARDS relative hover:shadow-xl overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52">
+          {latestBuying.map((nftList, id) => (
+            <div
+              className="NFTCARDS relative hover:shadow-xl overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
+              key={id}
+            >
               <div className="flex flex-col asepct-square rounded-t-md overflow-hidden items-center">
                 <Image
                   src="https://global-uploads.webflow.com/6241bcd9e666c1514401461d/6300caa62713a31a40fbee12_uVorQzNs.jpg"
