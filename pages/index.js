@@ -73,6 +73,7 @@ export default function Home(result, props) {
     const itemArray = [];
     contract.totalSupply().then((result) => {
       let totalSup = parseInt(result, 16);
+      setLoading(true);
 
       for (let i = 0; i < displayAmount; i++) {
         var token = i + 1;
@@ -109,6 +110,7 @@ export default function Home(result, props) {
     });
     await new Promise((r) => setTimeout(r, 5000));
     setNftpuller(itemArray);
+    setLoading(false);
   }
 
   const collectionImgHandler = () => {};
@@ -155,9 +157,11 @@ export default function Home(result, props) {
           </div>
         </section>
         <section className="mx-auto container p-8">
-          <p className="text-3xl font-extrabold m-2">Latest Transfers</p>
+          <p className="text-xl sm:text-3xl font-extrabold m-2">Latest Transfers</p>
           <div className="border-2 dark:border-slate-800 border-slate-100 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
-            {nftpuller.map((nftList, id) => (
+            {loading ? (
+            <div className="animate-pulse">Loading...</div>
+            ) : nftpuller.map((nftList, id) => (
               <Link key={nftList.id} href={`/dao/${nftList.id}`}>
                 <div
                   className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
@@ -196,17 +200,17 @@ export default function Home(result, props) {
                   </div>
                 </div>
               </Link>
-            ))}
+            ))}            
           </div>
         </section>
 
         <section className="p-8 rounded-md w-full container mx-auto mt-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-3xl font-extrabold m-2">DefenDao List</p>
+              <p className="text-xl sm:text-3xl font-extrabold m-2">DefenDao List</p>
             </div>
-            <div className="flex items-center justify-end w-1/4">
-              <div className="flex w-full bg-gray-50 dark:bg-gray-700 items-center p-2 rounded-md">
+            <div className="flex items-center justify-end">
+              <div className="flex bg-gray-50 dark:bg-gray-700 items-center p-2 rounded-md">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-gray-400"
@@ -221,7 +225,7 @@ export default function Home(result, props) {
                   />
                 </svg>
                 <input
-                  className="bg-gray-50 dark:bg-gray-700 outline-none ml-1 block"
+                  className="bg-gray-50 dark:bg-gray-700 outline-none ml-1"
                   type="serach"
                   id="serach"
                   placeholder="search..."
@@ -236,14 +240,14 @@ export default function Home(result, props) {
           <>
             <div className="container mx-auto px-8 -mt-3">
               <div className="grid grid-cols-10 font-semibold text-center bg-slate-200 dark:bg-slate-700 p-2 rounded-t-xl">
-                <div className="col-span-1">Rank</div>
-                <div className="col-span-1">Mainnet</div>
-                <div className="col-span-1">Img</div>
-                <div className="col-span-2">CollectionName</div>
-                <div className="col-span-1">Members</div>
-                <div className="col-span-1">Tickets</div>
-                <div className="col-span-1">TVL</div>
-                <div className="col-span-1">FloorPrice</div>
+                <div className="col-span-1 sm:col-span-1">Rank</div>
+                <div className="col-span-1 hidden sm:block">Mainnet</div>
+                <div className="col-span-3 sm:col-span-1">Img</div>
+                <div className="col-span-2 hidden sm:block">CollectionName</div>
+                <div className="col-span-3 sm:col-span-1">Members</div>
+                <div className="col-span-3 sm:col-span-1">Tickets</div>
+                <div className="col-span-1 hidden sm:block">TVL</div>
+                <div className="col-span-1 hidden sm:block">FloorPrice</div>
               </div>
               {loading ? (
                 <div className="relative grid grid-cols-10 py-10 p-2 border-b text-center px-auto border-b-slate-500 bg-slate-200 dark:bg-slate-900 bg-opacity-20 h-96 animate-pulse ">
@@ -255,9 +259,9 @@ export default function Home(result, props) {
                     className="relative grid grid-cols-10 py-10 p-2 border-b text-center border-b-slate-500 bg-slate-100 dark:bg-slate-900 bg-opacity-20 group"
                     key={daoList.id}
                   >
-                    <div className="col-span-1"># {id + 1}</div>
-                    <div className="col-span-1">Etherium</div>
-                    <div className="col-span-1 flex justify-center items-center">
+                    <div className="col-span-1 sm:col-span-1"># {id + 1}</div>
+                    <div className="col-span-1 hidden sm:block">Etherium</div>
+                    <div className="col-span-3 sm:col-span-1 flex justify-center items-center">
                       <>
                         {daoList.image_url ? (
                           <Image
@@ -273,11 +277,11 @@ export default function Home(result, props) {
                         ) : null}
                       </>
                     </div>
-                    <div className="col-span-2">{daoList.name}</div>
-                    <div className="col-span-1">👩‍👧‍👧 192 </div>
-                    <div className="col-span-1">🏷 1412</div>
-                    <div className="col-span-1">142,123 USDT </div>
-                    <div className="col-span-1"> 1.232 ETH</div>
+                    <div className="col-span-2 hidden sm:block">{daoList.name}</div>
+                    <div className="col-span-3 sm:col-span-1">👩‍👧‍👧 192 </div>
+                    <div className="col-span-3 sm:col-span-1">🏷 1412</div>
+                    <div className="col-span-1 hidden sm:block">142,123 USDT </div>
+                    <div className="col-span-1 hidden sm:block"> 1.232 ETH</div>
                     <div className="col-span-1 invisible group-hover:visible mx-4">
                       <Link
                         href={{
