@@ -6,8 +6,15 @@
   @apply bg-white dark:bg-[#202225];
 }
 
-body[data-theme="dark"] {
-  --bg: #202225;
+@media (prefers-color-scheme: dark) {
+  .scheme {
+    background: #202225;
+    color: #fff;
+  }
+}
+
+body {
+  @apply dark:bg-[#202225] bg-white
 }
 
 .header--animated {

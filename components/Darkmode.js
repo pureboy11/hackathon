@@ -1,7 +1,8 @@
 import { useTheme } from "next-themes";
+import { useState } from "react";
 
 export default function Darkmode() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme("dark");
 
   return (
     <>
@@ -19,7 +20,12 @@ export default function Darkmode() {
                             dark:hover:text-yellow-500
                             "
         type="button"
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        onClick={() =>
+          setTheme(
+            theme === "dark" ? "light" : "dark",
+            theme === "light" ? "light" : "dark"
+          )
+        }
       >
         {/* light mode */}
         {/* <div className="visible dark:invisible dark:h-0 dark:w-0 h-5 w-5">🌝</div> */}

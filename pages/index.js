@@ -2,10 +2,14 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TitleManager from "../components/TitleManager";
+import axios from "axios";
 
-export default function Home(collections, props) {
+let pageSize = 50;
+let startIdx = 0;
+export default function Home(result, props) {
+  const router = useRouter;
   const [latestBuying, setLatestBuying] = useState([
     "NFT NAME",
     "asdfasdf",
@@ -16,14 +20,59 @@ export default function Home(collections, props) {
     "asdfasdf",
     "asdfasdf",
   ]);
+  const [osCollection, setOsCollection] = useState([]);
+  const [collectionImg, setCollectionImg] = useState([]);
+  const [searchDAO, setSearchDAO] = useState("");
+  const [collectionFetching, setCollectionFetching] = useState(false);
+  const [selectedDAO, setSelectedDAO] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [showDAO, setShowDao] = useState(false);
-  const router = useRouter;
+  const handleImgError = (e) => {
+    // e.value.src = "/img/Defendao_Logo_m.png";
+  };
+
+  async function getOsCollection() {
+    setLoading(true);
+
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+      },
+    };
+
+    axios
+      .get(
+        "https://api.opensea.io/api/v1/collections?offset=0&limit=50",
+        options
+      )
+      .then(function (response) {
+        const res = response.data;
+        const result = res.collections;
+        setOsCollection(result);
+        setLoading(false);
+        console.log(res);
+      });
+  }
+
+  const collectionImgHandler = () => {};
+
+  const onChange = (event) => {
+    setSearchDAO(event.target.value);
+  };
+
+  useEffect(() => {
+    getOsCollection();
+  }, []);
+
+  console.log(osCollection);
+  console.log(collectionImg);
+  console.log(selectedDAO);
 
   return (
     <>
       <TitleManager pageTitle="home" />
-      <div className="mx-3">
+      <div className="mx-3 h-screen">
         <section className="text-gray-600 body-font z-10 relative">
           <div className="INFO lg:flex items-center justify-center mt-2 container mx-auto">
             <Image
@@ -31,7 +80,6 @@ export default function Home(collections, props) {
               width={180}
               height={180}
               alt="Logo"
-              objectFit="contain"
               className="m-10 mx-auto md:mx-5"
             />
             <div className="ml-5">
@@ -90,13 +138,13 @@ export default function Home(collections, props) {
           </div>
         </section>
 
-        <div className="p-8 rounded-md w-full container mx-auto mt-4">
-          <div className="items-center justify-between pb-6">
+        <section className="p-8 rounded-md w-full container mx-auto mt-4">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-2xl font-extrabold m-2">NFT DefenDao List</p>
+              <p className="text-3xl font-extrabold m-2">DefenDao List</p>
             </div>
-            <div className="flex items-center justify-end">
-              <div className="flex bg-gray-50 dark:bg-gray-700 items-center p-2 rounded-md">
+            <div className="flex items-center justify-end w-1/4">
+              <div className="flex w-full bg-gray-50 dark:bg-gray-700 items-center p-2 rounded-md">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-gray-400"
@@ -111,232 +159,86 @@ export default function Home(collections, props) {
                 </svg>
                 <input
                   className="bg-gray-50 dark:bg-gray-700 outline-none ml-1 block"
-                  type="text"
-                  name=""
-                  id=""
+                  type="serach"
+                  id="serach"
                   placeholder="search..."
+                  onChange={onChange}
+                  value={searchDAO}
                 />
               </div>
             </div>
           </div>
-          <div>
-            <div className="overflow-x-auto">
-              <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                <table className="min-w-full leading-normal">
-                  <thead>
-                    <tr>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-600 text-left text-xs font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
-                        Project
-                      </th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-600 text-left text-xs font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
-                        Members
-                      </th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-600 text-left text-xs font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
-                        Created at
-                      </th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-600 text-left text-xs font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider"></th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-600 text-left text-xs font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-600 text-left text-xs font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
-                        Rank
-                      </th>
-                      <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-gray-600 text-left text-xs font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
-                        Join Btn
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10">
-                            <img
-                              className="w-full h-full rounded-full"
-                              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                              alt=""
-                            />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">
-                              Vera Carpenter
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Admin
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Jan 21, 2020
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">43</p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                          <span
-                            aria-hidden
-                            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                          ></span>
-                          <span className="relative">Activo</span>
-                        </span>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <span className="relative inline-block px-3 py-1 font-semibold">
-                          # 1
-                        </span>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <Link href="/dao/123">
-                          <button className="bg-slate-500 rounded-xl p-2 w-24">
-                            <p>Enter</p>
-                          </button>
-                        </Link>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10">
-                            <img
-                              className="w-full h-full rounded-full"
-                              src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                              alt=""
-                            />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">
-                              Blake Bowman
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Editor
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm" />
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">77</p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                          <span
-                            aria-hidden
-                            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                          ></span>
-                          <span className="relative">Activo</span>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10">
-                            <img
-                              className="w-full h-full rounded-full"
-                              src="https://images.unsplash.com/photo-1540845511934-7721dd7adec3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                              alt=""
-                            />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">
-                              Dana Moore
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Editor
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm" />
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">64</p>
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <span className="relative inline-block px-3 py-1 font-semibold text-orange-900 leading-tight">
-                          <span
-                            aria-hidden
-                            className="absolute inset-0 bg-orange-200 opacity-50 rounded-full"
-                          ></span>
-                          <span className="relative">Suspended</span>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-5 py-5 text-sm">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 w-10 h-10">
-                            <img
-                              className="w-full h-full rounded-full"
-                              src="https://images.unsplash.com/photo-1522609925277-66fea332c575?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&h=160&w=160&q=80"
-                              alt=""
-                            />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">
-                              Alonzo Cox
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-5 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Admin
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          Jan 18, 2020
-                        </p>
-                      </td>
-                      <td className="px-5 py-5 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">70</p>
-                      </td>
-                      <td className="px-5 py-5 text-sm">
-                        <span className="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
-                          <span
-                            aria-hidden
-                            className="absolute inset-0 bg-red-200 opacity-50 rounded-full"
-                          ></span>
-                          <span className="relative">Inactive</span>
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div className="px-5 py-5 border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
-                  <span className="text-xs xs:text-sm text-gray-900">
-                    Showing 1 to 4 of 50 Entries
-                  </span>
-                  <div className="inline-flex mt-2 xs:mt-0">
-                    <button className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-l">
-                      Prev
-                    </button>
-                    &nbsp; &nbsp;
-                    <button className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-r">
-                      Next
-                    </button>
-                  </div>
-                </div>
+        </section>
+        <section>
+          <>
+            <div className="container mx-auto px-8 -mt-3">
+              <div className="grid grid-cols-10 font-semibold text-center bg-slate-200 dark:bg-slate-700 p-2 rounded-t-xl">
+                <div className="col-span-1">Rank</div>
+                <div className="col-span-1">Mainnet</div>
+                <div className="col-span-1">Img</div>
+                <div className="col-span-2">CollectionName</div>
+                <div className="col-span-1">Members</div>
+                <div className="col-span-1">Tickets</div>
+                <div className="col-span-1">TVL</div>
+                <div className="col-span-1">FloorPrice</div>
               </div>
+              {loading ? (
+                <div className="relative grid grid-cols-10 py-10 p-2 border-b text-center px-auto border-b-slate-500 bg-slate-200 dark:bg-slate-900 bg-opacity-20 h-96 animate-pulse ">
+                  <span>Loading...</span>
+                </div>
+              ) : (
+                osCollection.map((daoList, id) => (
+                  <div
+                    className="relative grid grid-cols-10 py-10 p-2 border-b text-center border-b-slate-500 bg-slate-100 dark:bg-slate-900 bg-opacity-20 group"
+                    key={daoList.id}
+                  >
+                    <div className="col-span-1"># {id + 1}</div>
+                    <div className="col-span-1">Etherium</div>
+                    <div className="col-span-1 flex justify-center items-center">
+                      <>
+                        {daoList.image_url ? (
+                          <Image
+                            src={daoList.image_url}
+                            width={60}
+                            height={60}
+                            unoptimized="true"
+                            alt="CollectionImg"
+                            onError={handleImgError}
+                            aria-placeholder="CollectionImg"
+                          />
+                        ) : null}
+                      </>
+                    </div>
+                    <div className="col-span-2">{daoList.name}</div>
+                    <div className="col-span-1">👩‍👧‍👧 192 </div>
+                    <div className="col-span-1">🏷 1412</div>
+                    <div className="col-span-1">142,123 USDT </div>
+                    <div className="col-span-1"> 1.232 ETH</div>
+                    <div className="col-span-1 invisible group-hover:visible mx-4">
+                      <Link
+                        href={{
+                          pathname: `/dao/${daoList.name.replace(/ /g, "")}`,
+                        }}
+                        onClick={() => setSelectedDAO(daoList)}
+                        selectedDAO={selectedDAO}
+                      >
+                        <div className="bg-orange-400 p-2 px-2 shadow-xl rounded-lg">
+                          Enter
+                        </div>
+                      </Link>
+                      {/* <div className="absolute left-0 top-0 w-full h-28 hover:bg-slate-800 hover:bg-opacity-20"></div> */}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-          </div>
-        </div>
+          </>
+        </section>
       </div>
     </>
   );
 }
 
-// 빌드 타임에 호출
 // export async function getServerSideProps() {
 //   const options = {
 //     method: "GET",
@@ -346,14 +248,14 @@ export default function Home(collections, props) {
 //   };
 
 //   const res = await fetch(
-//     "https://api.opensea.io/api/v1/collections?offset=0&limit=100",
+//     "https://api.opensea.io/api/v1/collections?offset=0&limit=50",
 //     options
 //   );
-//   const collections = await res.json();
-//   const collectionList = collections.collections;
-//   // console.log(collections);
+//   const result = await res.json();
+
+// console.log(collections);
 
 //   return {
-//     props: { collectionList },
+//     props: { result },
 //   };
 // }
