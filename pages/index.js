@@ -5,6 +5,14 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import TitleManager from "../components/TitleManager";
 import axios from "axios";
+import { ethers } from "ethers";
+import NFTCollection from "../components/data/NFTpuller.json";
+import {
+  nftContract,
+  key,
+  displayAmount,
+  mainnet,
+} from "../components/setting";
 
 let pageSize = 50;
 let startIdx = 0;
@@ -24,13 +32,15 @@ export default function Home(result, props) {
   const [collectionImg, setCollectionImg] = useState([]);
   const [searchDAO, setSearchDAO] = useState("");
   const [collectionFetching, setCollectionFetching] = useState(false);
-  const [selectedDAO, setSelectedDAO] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [selectedDao, setSelectedDao] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [nftpuller, setNftpuller] = useState([]);
 
   const handleImgError = (e) => {
     // e.value.src = "/img/Defendao_Logo_m.png";
   };
 
+  //OpenSea API//
   async function getOsCollection() {
     setLoading(true);
 
@@ -51,8 +61,54 @@ export default function Home(result, props) {
         const result = res.collections;
         setOsCollection(result);
         setLoading(false);
-        console.log(res);
+        // console.log(res);
       });
+  }
+
+  //nftPuller//
+  async function generateNft() {
+    const provider = new ethers.providers.JsonRpcProvider(mainnet);
+    const wallet = new ethers.Wallet(key, provider);
+    const contract = new ethers.Contract(nftContract, NFTCollection, wallet);
+    const itemArray = [];
+    contract.totalSupply().then((result) => {
+      let totalSup = parseInt(result, 16);
+
+      for (let i = 0; i < displayAmount; i++) {
+        var token = i + 1;
+        const owner = contract.ownerOf(token);
+        const rawUri = contract.tokenURI(token);
+        const Uri = Promise.resolve(rawUri);
+        console.log(Uri);
+        const getUri = Uri.then((value) => {
+          let str = value;
+          let cleanUri = str.replace("ipfs://", "https://ipfs.io/ipfs/");
+          let metadata = axios.get(cleanUri).catch(function (error) {
+            console.log(error.toJSON());
+          });
+          return metadata;
+        });
+        getUri.then((value) => {
+          let rawImg = value.data.image;
+          console.log(value)
+          var name = value.data.name;
+          let image = rawImg.replace("ipfs://", "https://ipfs.io/ipfs/");
+          Promise.resolve(owner).then((value) => {
+            let ownerW = value;
+            let meta = {
+              name: name,
+              img: image,
+              tokenId: token,
+              wallet: ownerW,
+            };
+            console.log(meta);
+            itemArray.push(meta);
+          });
+        });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 5000));
+    setNftpuller(itemArray);
   }
 
   const collectionImgHandler = () => {};
@@ -65,9 +121,13 @@ export default function Home(result, props) {
     getOsCollection();
   }, []);
 
-  console.log(osCollection);
-  console.log(collectionImg);
-  console.log(selectedDAO);
+  useEffect(() => {
+    generateNft();
+  }, [setNftpuller]);
+
+  // console.log(osCollection);
+  // console.log(collectionImg);
+  // console.log(selectedDao);
 
   return (
     <>
@@ -80,7 +140,8 @@ export default function Home(result, props) {
               width={180}
               height={180}
               alt="Logo"
-              className="m-10 mx-auto md:mx-5"
+              className="m-10 mx-auto md:mx-5 w-auto h-auto"
+              priority="true"
             />
             <div className="ml-5">
               <h1 className="title-font text-3xl mb-4 text-gray-900 font-extrabold">
@@ -96,19 +157,20 @@ export default function Home(result, props) {
         <section className="mx-auto container p-8">
           <p className="text-3xl font-extrabold m-2">Latest Transfers</p>
           <div className="border-2 dark:border-slate-800 border-slate-100 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
-            {latestBuying.map((nftList, id) => (
+            {nftpuller.map((nftList, id) => (
               <Link key={nftList.id} href={`/dao/${nftList.id}`}>
                 <div
                   className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
                   key={id}
                 >
-                  <div className="flex flex-col asepct-square rounded-t-md overflow-hidden items-center">
+                  <div className="flex flex-col asepct-square overflow-hidden items-center">
                     <Image
-                      src="https://global-uploads.webflow.com/6241bcd9e666c1514401461d/6300caa62713a31a40fbee12_uVorQzNs.jpg"
+                      src={nftList.img}
                       alt="NFT Img"
-                      className="object-cover block hover:scale-105 hover:rounded-t-xl group-hover:rounded-t-xl group-hover:scale-105 transition-all duration-300"
+                      className="object-cover block hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
                       width={250}
                       height={250}
+                      priority="true"
                     />
                   </div>
                   <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
@@ -119,7 +181,7 @@ export default function Home(result, props) {
                   <div className="TEXTBOX px-2 py-1 space-y-2 bg-slate-100 dark:bg-slate-700">
                     <div className="flex text-xs items-center">
                       <span className="block text-lg font-semibold truncate ... whitespace-pre">
-                        {nftList}
+                        {nftList.name}
                       </span>
                     </div>
                     <div className="flex text-lg items-center pb-7">
@@ -153,7 +215,8 @@ export default function Home(result, props) {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    d="M8 4a4 4 0 100 8 4 4 0 
+                    000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                     clipRule="evenodd"
                   />
                 </svg>
@@ -204,6 +267,7 @@ export default function Home(result, props) {
                             unoptimized="true"
                             alt="CollectionImg"
                             onError={handleImgError}
+                            className="w-auto h-auto"
                             aria-placeholder="CollectionImg"
                           />
                         ) : null}
@@ -219,8 +283,7 @@ export default function Home(result, props) {
                         href={{
                           pathname: `/dao/${daoList.name.replace(/ /g, "")}`,
                         }}
-                        onClick={() => setSelectedDAO(daoList)}
-                        selectedDAO={selectedDAO}
+                        onClick={() => setSelectedDao(daoList)}
                       >
                         <div className="bg-orange-400 p-2 px-2 shadow-xl rounded-lg">
                           Enter
