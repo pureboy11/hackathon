@@ -5,8 +5,7 @@ import Chart from "../../components/common/chart";
 
 export default function DefenDaoDetail(props) {
   const router = useRouter;
-  console.log(router);
-  console.log(props);
+  console.log({ props: props });
 
   const chartRef = useRef(null);
 
