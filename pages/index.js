@@ -7,6 +7,7 @@ import TitleManager from "../components/TitleManager";
 import axios from "axios";
 import { ethers } from "ethers";
 import NFTCollection from "../components/data/NFTpuller.json";
+import DefenDAOFactory from "../components/data/TestDefenDAOFactory.json";
 import {
   nftContract,
   key,
@@ -44,6 +45,17 @@ export default function Home(result, props) {
   async function getOsCollection() {
     setLoading(true);
 
+    const provider = new ethers.providers.JsonRpcProvider(
+      "http://127.0.0.1:8545/"
+    );
+    const contract = new ethers.Contract(
+      "0x2538a10b7fFb1B78c890c870FC152b10be121f04",
+      DefenDAOFactory,
+      provider
+    );
+    const collist = await contract.getAllCollections();
+    const slugs = await contract.getAllSlugs();
+
     const options = {
       method: "GET",
       headers: {
@@ -51,63 +63,72 @@ export default function Home(result, props) {
       },
     };
 
-    axios
-      .get(
-        "https://api.opensea.io/api/v1/collections?offset=0&limit=50",
-        options
-      )
-      .then(function (response) {
-        const res = response.data;
-        const result = res.collections;
-        setOsCollection(result);
-        setLoading(false);
-        // console.log(res);
-      });
+    await slugs.map((slug) => {
+      axios
+        .get("https://api.opensea.io/api/v1/collection/" + slug, options)
+        .then(function (response) {
+          const res = response.data;
+          console.log(res);
+          let coll = osCollection;
+          coll.push(res);
+          setOsCollection(coll);
+          //console.log(res);
+          //const result = res.collection.slug;
+          //console.log(result);
+        });
+    });
+
+    setLoading(false);
   }
 
   //nftPuller//
   async function generateNft() {
-    const provider = new ethers.providers.JsonRpcProvider(mainnet);
-    const wallet = new ethers.Wallet(key, provider);
-    const contract = new ethers.Contract(nftContract, NFTCollection, wallet);
+    const provider = new ethers.providers.JsonRpcProvider(
+      "http://127.0.0.1:8545/"
+    );
+    const contract = new ethers.Contract(
+      "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      DefenDAOFactory,
+      provider
+    );
     const itemArray = [];
-    contract.totalSupply().then((result) => {
-      let totalSup = parseInt(result, 16);
-      setLoading(true);
+    // contract.totalSupply().then((result) => {
+    //   let totalSup = parseInt(result, 16);
+    //   setLoading(true);
 
-      for (let i = 0; i < displayAmount; i++) {
-        var token = i + 1;
-        const owner = contract.ownerOf(token);
-        const rawUri = contract.tokenURI(token);
-        const Uri = Promise.resolve(rawUri);
-        console.log(Uri);
-        const getUri = Uri.then((value) => {
-          let str = value;
-          let cleanUri = str.replace("ipfs://", "https://ipfs.io/ipfs/");
-          let metadata = axios.get(cleanUri).catch(function (error) {
-            console.log(error.toJSON());
-          });
-          return metadata;
-        });
-        getUri.then((value) => {
-          let rawImg = value.data.image;
-          console.log(value)
-          var name = value.data.name;
-          let image = rawImg.replace("ipfs://", "https://ipfs.io/ipfs/");
-          Promise.resolve(owner).then((value) => {
-            let ownerW = value;
-            let meta = {
-              name: name,
-              img: image,
-              tokenId: token,
-              wallet: ownerW,
-            };
-            console.log(meta);
-            itemArray.push(meta);
-          });
-        });
-      }
-    });
+    //   for (let i = 0; i < displayAmount; i++) {
+    //     var token = i + 1;
+    //     const owner = contract.ownerOf(token);
+    //     const rawUri = contract.tokenURI(token);
+    //     const Uri = Promise.resolve(rawUri);
+    //     console.log(Uri);
+    //     const getUri = Uri.then((value) => {
+    //       let str = value;
+    //       let cleanUri = str.replace("ipfs://", "https://ipfs.io/ipfs/");
+    //       let metadata = axios.get(cleanUri).catch(function (error) {
+    //         console.log(error.toJSON());
+    //       });
+    //       return metadata;
+    //     });
+    //     getUri.then((value) => {
+    //       let rawImg = value.data.image;
+    //       console.log(value)
+    //       var name = value.data.name;
+    //       let image = rawImg.replace("ipfs://", "https://ipfs.io/ipfs/");
+    //       Promise.resolve(owner).then((value) => {
+    //         let ownerW = value;
+    //         let meta = {
+    //           name: name,
+    //           img: image,
+    //           tokenId: token,
+    //           wallet: ownerW,
+    //         };
+    //         console.log(meta);
+    //         itemArray.push(meta);
+    //       });
+    //     });
+    //   }
+    // });
     await new Promise((r) => setTimeout(r, 5000));
     setNftpuller(itemArray);
     setLoading(false);
@@ -157,57 +178,63 @@ export default function Home(result, props) {
           </div>
         </section>
         <section className="mx-auto container p-8">
-          <p className="text-xl sm:text-3xl font-extrabold m-2">Latest Transfers</p>
+          <p className="text-xl sm:text-3xl font-extrabold m-2">
+            Latest Transfers
+          </p>
           <div className="border-2 dark:border-slate-800 border-slate-100 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
             {loading ? (
-            <div className="animate-pulse">Loading...</div>
-            ) : nftpuller.map((nftList, id) => (
-              <Link key={nftList.id} href={`/dao/${nftList.id}`}>
-                <div
-                  className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
-                  key={id}
-                >
-                  <div className="flex flex-col asepct-square overflow-hidden items-center">
-                    <Image
-                      src={nftList.img}
-                      alt="NFT Img"
-                      className="object-cover block hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
-                      width={250}
-                      height={250}
-                      priority="true"
-                    />
-                  </div>
-                  <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
-                    <span className="bg-slate-400 dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
-                      Icons
-                    </span>
-                  </div>
-                  <div className="TEXTBOX px-2 py-1 space-y-2 bg-slate-100 dark:bg-slate-700">
-                    <div className="flex text-xs items-center">
-                      <span className="block text-lg font-semibold truncate ... whitespace-pre">
-                        {nftList.name}
+              <div className="animate-pulse">Loading...</div>
+            ) : (
+              nftpuller.map((nftList, id) => (
+                <Link key={nftList.id} href={`/dao/${nftList.id}`}>
+                  <div
+                    className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
+                    key={id}
+                  >
+                    <div className="flex flex-col asepct-square overflow-hidden items-center">
+                      <Image
+                        src={nftList.img}
+                        alt="NFT Img"
+                        className="object-cover block hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
+                        width={250}
+                        height={250}
+                        priority="true"
+                      />
+                    </div>
+                    <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
+                      <span className="bg-slate-400 dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
+                        Icons
                       </span>
                     </div>
-                    <div className="flex text-lg items-center pb-7">
-                      <span className="block text-sm font-medium truncate ... whitespace-pre">
-                        0.124124 ETH
-                      </span>
+                    <div className="TEXTBOX px-2 py-1 space-y-2 bg-slate-100 dark:bg-slate-700">
+                      <div className="flex text-xs items-center">
+                        <span className="block text-lg font-semibold truncate ... whitespace-pre">
+                          {nftList.name}
+                        </span>
+                      </div>
+                      <div className="flex text-lg items-center pb-7">
+                        <span className="block text-sm font-medium truncate ... whitespace-pre">
+                          0.124124 ETH
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
-                    Go to Dao
+                    <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
+                      Go to Dao
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}            
+                </Link>
+              ))
+            )}
           </div>
         </section>
 
         <section className="p-8 rounded-md w-full container mx-auto mt-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xl sm:text-3xl font-extrabold m-2">DefenDao List</p>
+              <p className="text-xl sm:text-3xl font-extrabold m-2">
+                DefenDao List
+              </p>
             </div>
             <div className="flex items-center justify-end">
               <div className="flex bg-gray-50 dark:bg-gray-700 items-center p-2 rounded-md">
@@ -277,10 +304,14 @@ export default function Home(result, props) {
                         ) : null}
                       </>
                     </div>
-                    <div className="col-span-2 hidden sm:block">{daoList.name}</div>
+                    <div className="col-span-2 hidden sm:block">
+                      {daoList.name}
+                    </div>
                     <div className="col-span-3 sm:col-span-1">👩‍👧‍👧 192 </div>
                     <div className="col-span-3 sm:col-span-1">🏷 1412</div>
-                    <div className="col-span-1 hidden sm:block">142,123 USDT </div>
+                    <div className="col-span-1 hidden sm:block">
+                      142,123 USDT{" "}
+                    </div>
                     <div className="col-span-1 hidden sm:block"> 1.232 ETH</div>
                     <div className="col-span-1 invisible group-hover:visible mx-4">
                       <Link
