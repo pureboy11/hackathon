@@ -8,6 +8,7 @@ import axios from "axios";
 import { ethers } from "ethers";
 import NFTCollection from "../components/data/NFTpuller.json";
 import DefenDAOFactory from "../components/data/TestDefenDAOFactory.json";
+import DefenDAO from "../components/data/TestDefenDAO.json";
 import {
   nftContract,
   key,
@@ -28,48 +29,29 @@ export default function Home(result, props) {
     "asdfasdf",
   ]);
   const [defendaoData, setdefendaData] = useState([]);
-  const [osCollection, setOsCollection] = useState([]);
   const [searchbar, setSearchbar] = useState("");
   const [collectionFetching, setCollectionFetching] = useState(false);
   const [selectedDao, setSelectedDao] = useState("");
   const [loading, setLoading] = useState(true);
   const [nftpuller, setNftpuller] = useState([]);
-
-  const asyncAxiosCall = async (slug) => {
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-      },
-    };
-
-    try {
-      const response = await axios.get(
-        "https://api.opensea.io/api/v1/collection/" + slug
-      );
-      console.log("response >>", response.data);
-    } catch (err) {
-      console.log("Error >>", err);
-    }
-  };
+  const provider = new ethers.providers.JsonRpcProvider(
+    "http://127.0.0.1:8545/"
+  );
+  const defenDaoFactory = new ethers.Contract(
+    "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
+    DefenDAOFactory,
+    provider
+  );
 
   //Data Fetch//
   async function getOsCollection() {
     setLoading(true);
     let tempData = [];
     let osData = [];
+    let floorPrice = [];
 
-    //ethers//
-    const provider = new ethers.providers.JsonRpcProvider(
-      "http://127.0.0.1:8545/"
-    );
-    const contract = new ethers.Contract(
-      "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
-      DefenDAOFactory,
-      provider
-    );
-    const collist = await contract.getAllCollections();
-    const slugs = await contract.getAllSlugs();
+    const collist = await defenDaoFactory.getAllCollections();
+    const slugs = await defenDaoFactory.getAllSlugs();
 
     //opensea//
     const options = {
@@ -95,6 +77,18 @@ export default function Home(result, props) {
       osData[index] = result;
     }
 
+    for (const [index, collectionAddress] of collist.entries()) {
+      const defenDAO = new ethers.Contract(
+        collectionAddress,
+        DefenDAO,
+        provider
+      );
+
+      floorPrice[index] = ethers.utils.formatEther(
+        await defenDAO.curFloorPrice()
+      );
+    }
+
     //set DAOdata//
     for (let i = 0; i < collist.length; i++) {
       tempData.push({
@@ -102,30 +96,20 @@ export default function Home(result, props) {
         slug: slugs[i],
         address: collist[i],
         opensea: osData[i],
+        floorPrice: floorPrice[i],
       });
     }
 
     setdefendaData(tempData);
-    setOsCollection(osData);
-
     setLoading(false);
   }
 
   async function generateNft() {
-    const provider = new ethers.providers.JsonRpcProvider(
-      "http://127.0.0.1:8545/"
-    );
-    const contract = new ethers.Contract(
-      "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
-      DefenDAOFactory,
-      provider
-    );
-
     const itemArray = [];
     // id image name
     setLoading(true);
 
-    const recentSolds = await contract.getRecentSolds();
+    const recentSolds = await defenDaoFactory.getRecentSolds();
     console.log(recentSolds);
     for (const [index, sold] of recentSolds.entries()) {
       const options = {
@@ -295,7 +279,6 @@ export default function Home(result, props) {
                 <div className="col-span-1 hidden sm:block">Mainnet</div>
                 <div className="col-span-3 sm:col-span-1">Img</div>
                 <div className="col-span-2 hidden sm:block">CollectionName</div>
-                <div className="col-span-3 sm:col-span-1">Members</div>
                 <div className="col-span-3 sm:col-span-1">Tickets</div>
                 <div className="col-span-1 hidden sm:block">TVL</div>
                 <div className="col-span-1 hidden sm:block">FloorPrice</div>
@@ -330,12 +313,14 @@ export default function Home(result, props) {
                     <div className="col-span-2 hidden sm:block">
                       {daoList.opensea.collection.name}
                     </div>
-                    <div className="col-span-3 sm:col-span-1">👩‍👧‍👧 192 </div>
                     <div className="col-span-3 sm:col-span-1">🏷 1412</div>
                     <div className="col-span-1 hidden sm:block">
                       142,123 USDT{" "}
                     </div>
-                    <div className="col-span-1 hidden sm:block"> 1.232 ETH</div>
+                    <div className="col-span-1 hidden sm:block">
+                      {" "}
+                      {daoList.floorPrice} ETH
+                    </div>
                     <div className="col-span-1 invisible group-hover:visible mx-4">
                       <Link
                         href={{

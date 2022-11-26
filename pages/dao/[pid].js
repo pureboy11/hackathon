@@ -5,6 +5,13 @@ import Chart from "../../components/common/chart";
 import Link from "next/link";
 import { useState } from "react";
 
+// project name -> 가져올수있음
+// floor price -> 가져올수있음
+// offerPriceUnit -> 단위에요
+// offerPriceUnit * 1 , offerPriceUnit * 2 .....
+// 0.5, 1.0, 1.5 ......
+// getAllOffers(price) price단위는 0.5, 1.0, 1.5 인듯
+
 export default function DefenDaoDetail(props) {
     const router = useRouter;
     const chartRef = useRef(null);
