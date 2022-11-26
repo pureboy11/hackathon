@@ -1,9 +1,10 @@
-import { useRouter } from "next/router";
+import { useRouter, withRouter } from "next/router";
 import TitleManager from "../../components/TitleManager";
 import { useRef, useEffect } from "react";
 import Chart from "../../components/common/chart";
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 // project name -> 가져올수있음
 // floor price -> 가져올수있음
@@ -12,11 +13,13 @@ import { useState } from "react";
 // 0.5, 1.0, 1.5 ......
 // getAllOffers(price) price단위는 0.5, 1.0, 1.5 인듯
 
-export default function DefenDaoDetail(props) {
-    const router = useRouter;
+export default function DefenDaoDetail() {
+    const router = useRouter();
+    console.log(router);
     const chartRef = useRef(null);
-    const [navigate, setNavigate] = useState("1")
-    
+    const [navigate, setNavigate] = useState("1");
+    const data = router.query.data;
+    console.log(data);
 
     useEffect(() => {
         const chart = chartRef.current;
@@ -30,19 +33,36 @@ export default function DefenDaoDetail(props) {
     return (
         <>
             <TitleManager pageTitle="CollectionNAME" />
-            <div className="dark:text-slate-300 ml-5 mt-5 pb-2">{` TAG > TAG > TAG `}</div>
+            <div className="dark:text-slate-300 ml-5 mt-5 pb-2">{` ETH > Collect
+             > TAG `}</div>
             <div className="relative mx-3 lg:mx-20 h-screen">
                 <section className="INFO h-36 mb-10">
                     <div className="grid grid-cols-6">
                         <div className="col-span-4">
                             <div className="flex items-center justify-start m-2">
-                                <div className="bg-yellow-200 rounded-full w-16 h-16 mr-4"></div>
-                                <div className="text-4xl font-semibold dark:text-slate-50">
-                                    Project Name
+                                <div className="rounded-full w-20 h-20 mr-4">
+                                    {router.query.img !== null ? (
+                                        <>
+                                            <Image
+                                                src={router.query.img}
+                                                width={200}
+                                                height={200}
+                                                unoptimized="true"
+                                                alt="CollectionImg"
+                                                className=" rounded-xl"
+                                                aria-placeholder="CollectionImg"
+                                            />
+                                        </>
+                                    ) : null}
                                 </div>
-                            </div>
-                            <div className="text-2xl font-semibold text-slate-400 ml-20">
-                                Floor Price : 0.542 ETH
+                                <div>
+                                    <div className="text-4xl mb-auto font-semibold dark:text-slate-50">
+                                        {router.query.name}
+                                    </div>
+                                    <div className="text-2xl font-semibold text-slate-400">
+                                        Floor Price : {router.query.floorPrice || "Loading"} ETH
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="">
@@ -74,7 +94,7 @@ export default function DefenDaoDetail(props) {
                                 className="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 text-lg"
                                 onClick={() => setNavigate(0)}
                             >
-                                 History
+                                History
                             </button>
                         </li>
                         {/* <li>
@@ -98,17 +118,13 @@ export default function DefenDaoDetail(props) {
                         <Chart className="" />
                     </div>
                     <div className="col-span-2 border border-slate-200 m-4 lg:h-[600px] grid grid-row-6 rounded-lg">
-                        <div className="row-span-3 border-white border">
-                            Bidding area
-                        </div>
+                        <div className="row-span-3 border-white border">Bidding area</div>
                         <div className="row-span-2 border-white border grid grid-cols-3">
                             <div className="col-span-1">1</div>
                             <div className="col-span-1">2</div>
                             <div className="col-span-1">3</div>
                         </div>
-                        <div className="row-span-1 border-white border">
-                            Available for Withdrawal
-                        </div>
+                        <div className="row-span-1 border-white border">Available for Withdrawal</div>
                     </div>
                 </section>
             </div>
