@@ -108,62 +108,55 @@ export default function Home(result, props) {
     setdefendaData(tempData);
     setOsCollection(osData);
 
-    console.log("WANT DATA", defendaoData);
-
     setLoading(false);
   }
-  // async function generateNft() {
-  //   const provider = new ethers.providers.JsonRpcProvider(
-  //     "http://127.0.0.1:8545/"
-  //   );
-  //   const contract = new ethers.Contract(
-  //     "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-  //     DefenDAOFactory,
-  //     provider
-  //   );
-  //   const itemArray = [];
-  // contract.totalSupply().then((result) => {
-  //   let totalSup = parseInt(result, 16);
-  //   setLoading(true);
 
-  //   for (let i = 0; i < displayAmount; i++) {
-  //     var token = i + 1;
-  //     const owner = contract.ownerOf(token);
-  //     const rawUri = contract.tokenURI(token);
-  //     const Uri = Promise.resolve(rawUri);
-  //     console.log(Uri);
-  //     const getUri = Uri.then((value) => {
-  //       let str = value;
-  //       let cleanUri = str.replace("ipfs://", "https://ipfs.io/ipfs/");
-  //       let metadata = axios.get(cleanUri).catch(function (error) {
-  //         console.log(error.toJSON());
-  //       });
-  //       return metadata;
-  //     });
-  //     getUri.then((value) => {
-  //       let rawImg = value.data.image;
-  //       console.log(value)
-  //       var name = value.data.name;
-  //       let image = rawImg.replace("ipfs://", "https://ipfs.io/ipfs/");
-  //       Promise.resolve(owner).then((value) => {
-  //         let ownerW = value;
-  //         let meta = {
-  //           name: name,
-  //           img: image,
-  //           tokenId: token,
-  //           wallet: ownerW,
-  //         };
-  //         console.log(meta);
-  //         itemArray.push(meta);
-  //       });
-  //     });
-  //   }
-  // });
+  async function generateNft() {
+    const provider = new ethers.providers.JsonRpcProvider(
+      "http://127.0.0.1:8545/"
+    );
+    const contract = new ethers.Contract(
+      "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
+      DefenDAOFactory,
+      provider
+    );
 
-  //   await new Promise((r) => setTimeout(r, 5000));
-  //   setNftpuller(itemArray);
-  //   setLoading(false);
-  // }
+    const itemArray = [];
+    // id image name
+    setLoading(true);
+
+    const recentSolds = await contract.getRecentSolds();
+    console.log(recentSolds);
+    for (const [index, sold] of recentSolds.entries()) {
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      };
+
+      const nftAddr = sold[0];
+      const nftId = Number(sold[1]);
+      const price = ethers.utils.formatEther(sold[2]);
+      const claimer = sold[3];
+
+      const res = await fetch(
+        `https://api.opensea.io/api/v1/asset/${nftAddr}/${nftId}`,
+        options
+      );
+      const result = await res.json();
+      itemArray.push({
+        id: nftId,
+        img: result.image_url,
+        name: result.name,
+        price: price,
+      });
+    }
+
+    setNftpuller(itemArray);
+    console.log(itemArray);
+    setLoading(false);
+  }
 
   const onChange = (event) => {
     setSearchbar(event.target.value);
@@ -171,6 +164,7 @@ export default function Home(result, props) {
 
   useEffect(() => {
     getOsCollection();
+    generateNft();
   }, []);
 
   // console.log({ daoData: defendaoData });
@@ -220,14 +214,17 @@ export default function Home(result, props) {
                     key={id}
                   >
                     <div className="flex flex-col asepct-square overflow-hidden items-center">
-                      <Image
-                        src={nftList.img}
-                        alt="NFT Img"
-                        className="object-cover block hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
-                        width={250}
-                        height={250}
-                        priority="true"
-                      />
+                      {nftList.img !== null ? (
+                        <Image
+                          src={nftList.img}
+                          alt="NFT Img"
+                          className="object-cover block hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
+                          width={250}
+                          height={250}
+                          priority="true"
+                          unoptimized="true"
+                        />
+                      ) : null}
                     </div>
                     <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
                       <span className="bg-slate-400 dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
@@ -242,7 +239,7 @@ export default function Home(result, props) {
                       </div>
                       <div className="flex text-lg items-center pb-7">
                         <span className="block text-sm font-medium truncate ... whitespace-pre">
-                          0.124124 ETH
+                          {nftList.price} ETH
                         </span>
                       </div>
                     </div>
@@ -331,7 +328,7 @@ export default function Home(result, props) {
                       ) : null}
                     </div>
                     <div className="col-span-2 hidden sm:block">
-                      {daoList.slug}
+                      {daoList.opensea.collection.name}
                     </div>
                     <div className="col-span-3 sm:col-span-1">👩‍👧‍👧 192 </div>
                     <div className="col-span-3 sm:col-span-1">🏷 1412</div>
