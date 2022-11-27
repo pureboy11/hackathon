@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import Link from "next/link";
 import Darkmode from "./Darkmode";
 
 export default function Header() {
@@ -50,9 +51,9 @@ export default function Header() {
         className={`sticky top-0 z-20 flex py-3 shadow-md my-auto bg-white dark:bg-[#1B1E25] header"
         }`}
       >
-        <a href="/" id="link" className="mx-5 my-auto text-gray-400">
+        <Link href="/" id="link" className="mx-5 my-auto text-gray-400">
           DefenDAO
-        </a>
+        </Link>
         <div className="ml-auto mr-4 flex items-center">
           <button
             className="bg-orange-500 text-white active:bg-blueGray-600 text-xs font-bold uppercase px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 mr-4"
