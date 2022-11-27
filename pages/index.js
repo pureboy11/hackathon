@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import TitleManager from "../components/TitleManager";
 import axios from "axios";
 import { ethers } from "ethers";
+import { useTimeoutFn } from "react-use";
 import NFTCollection from "../components/data/NFTpuller.json";
 import DefenDAOFactory from "../components/data/TestDefenDAOFactory.json";
 import DefenDAO from "../components/data/TestDefenDAO.json";
@@ -17,6 +18,8 @@ export default function Home() {
     const [collectionFetching, setCollectionFetching] = useState(false);
     const [loading, setLoading] = useState(true);
     const [nftpuller, setNftpuller] = useState([]);
+    const [guideBook, setGuideBook] = useState(1);
+    const [, , setAutoChangeTime] = useTimeoutFn(() => setGuideBook((guideBook + 1) % 3), 5000);
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/");
     const defenDaoFactory = new ethers.Contract(
         "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
@@ -110,6 +113,14 @@ export default function Home() {
         setSearchbar(event.target.value);
     };
 
+    const autoChangeGuideBook = () => {
+        setAutoChangeTime();
+    };
+
+    useEffect(() => {
+        autoChangeGuideBook();
+    }, [guideBook]);
+
     useEffect(() => {
         getCollection();
         generateNft();
@@ -119,23 +130,67 @@ export default function Home() {
         <>
             <TitleManager pageTitle="home" />
             <div className="mx-3">
-                <section className="text-gray-600 body-font z-10 relative">
-                    <div className="INFO lg:flex items-center justify-center mt-2 container mx-auto">
-                        <Image
-                            src="/Defendao_Logo.png"
-                            width={180}
-                            height={180}
-                            alt="Logo"
-                            className="m-10 mx-auto md:mx-5 w-auto h-auto "
-                            priority="true"
-                        />
-                        <div className="ml-5">
-                            <h1 className="title-font text-3xl mb-4 text-gray-900 font-extrabold">
-                                We are the DAO defending NFT prices.
-                            </h1>
-                            <p className="text-xl font-semibold mb-8 leading-relaxed">
-                                One of the DAO members will purchase the NFT that come as a quick sale with randomly.
-                            </p>
+                <section className="text-gray-600 body-font relative">
+                    <div className="INFO lg:flex items-center justify-center mt-2 container mx-auto relative">
+                        <div className="sm:mt-16 mt-10 mb-10 mx-2 p-5 flex justify-center items-center bg-slate-200 dark:bg-slate-800 rounded-xl w-full h-40">
+                            <div className="m-3 text-indigo-400 uppercase font-pop text-3xl font-semibold z-10 absolute right-4 top-12">
+                                {guideBook % 3 === 1 ? (
+                                    <>
+                                        <button className="rounded-full bg-indigo-500 w-2 h-2 ml-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
+                                        <button className="rounded-full bg-indigo-300 w-2 h-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
+                                        <button className="rounded-full bg-indigo-300 w-2 h-2 hover:scale-110 transition duration-300 transform"></button>
+                                    </>
+                                ) : guideBook % 3 === 2 ? (
+                                    <>
+                                        <button className="rounded-full bg-indigo-300 w-2 h-2 ml-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
+                                        <button className="rounded-full bg-indigo-500 w-2 h-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
+                                        <button className="rounded-full bg-indigo-300 w-2 h-2 hover:scale-105 transition duration-300 transform"></button>
+                                    </>
+                                ) : guideBook % 3 === 0 ? (
+                                    <>
+                                        <button className="rounded-full bg-indigo-300 w-2 h-2 ml-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
+                                        <button className="rounded-full bg-indigo-300 w-2 h-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
+                                        <button className="rounded-full bg-indigo-500 w-2 h-2 hover:scale-110 transition duration-300 transform"></button>
+                                    </>
+                                ) : null}
+                                {/* <div className="bg-slate-600 w-40 h-40 absolute left-1/2 rotate-45"></div> */}
+                            </div>
+                            {guideBook === 1 ? (
+                                <section className="section1">
+                                    <div className="items-center">
+                                        <div className="text-xl font-semibold leading-relaxed text-slate-200">
+                                            We are the DAO defending NFT prices.
+                                        </div>
+                                    </div>
+                                </section>
+                            ) : guideBook === 2 ? (
+                                <section className="section2">
+                                    <div className="items-center">
+                                        <div className="text-xl font-semibold leading-relaxed text-slate-200">
+                                            One of the DAO members will purchase the NFT that come as a quick sale with
+                                            randomly.
+                                        </div>
+                                    </div>
+                                </section>
+                            ) : guideBook === 0 ? (
+                                <section className="section3">
+                                    <div className="items-center">
+                                        <div className="text-xl font-semibold leading-relaxed text-slate-200">
+                                            3 page comment (우리 서비스 3 step 인지 시키기!)
+                                        </div>
+                                    </div>
+                                </section>
+                            ) : null}
+                        </div>
+                        <div className="sm:absolute left-10 bottom-5">
+                            <Image
+                                src="/Defendao_Logo.png"
+                                width="120"
+                                height="120"
+                                alt="Logo"
+                                className="m-10 mx-auto w-auto h-auto "
+                                priority="true"
+                            />
                         </div>
                     </div>
                 </section>
@@ -198,8 +253,8 @@ export default function Home() {
                                             ) : null}
                                         </div>
                                         <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
-                                            <span className="bg-slate-400 dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
-                                                Icons
+                                            <span className="bg-slate-400 text-md dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
+                                                ETH
                                             </span>
                                         </div>
                                         <div className="TEXTBOX px-2 py-1 space-y-2 bg-slate-100 dark:bg-slate-700">
@@ -254,8 +309,8 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
-                    <div className="container mx-auto h-max mb-40">
-                        <div className="grid grid-cols-10 font-semibold text-center text-md sm:text-xl py-4 bg-slate-200 dark:bg-slate-700 p-2 rounded-t-xl text-slate-700 dark:text-slate-400">
+                    <div className="container mx-auto h-max mb-40 hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg bg-inherit shadow-md transition-all">
+                        <div className="grid grid-cols-10 font-semibold text-center text-md sm:text-xl py-4 bg-slate-200 dark:bg-slate-800 p-2 rounded-t-xl text-slate-700 dark:text-slate-400">
                             <div className="col-span-1 hidden sm:block">Rank</div>
                             <div className="col-span-2 sm:col-span-1"></div>
                             <div className="col-span-3 ">CollectionName</div>
@@ -333,9 +388,11 @@ export default function Home() {
                                             }}
                                             as={`/dao/${daoList.opensea.collection.name}`}
                                         >
-                                            <div className="bg-orange-400 p-4 shadow-xl rounded-lg">Enter</div>
+                                            <div className="relative bg-green-400 dark:bg-green-600 p-4 font-extrabold shadow-xl rounded-lg hover:z-50 invisible group-hover:visible">
+                                                Enter
+                                            </div>
                                         </Link>
-                                        {/* <div className="absolute left-0 top-0 w-full h-28 hover:bg-slate-800 hover:bg-opacity-20"></div> */}
+                                        {/* <div className="absolute left-0 top-0 w-full h-32 hover:bg-slate-700 hover:bg-opacity-20 z-0"></div> */}
                                     </div>
                                 </div>
                             ))
