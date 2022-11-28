@@ -391,10 +391,10 @@ export default function Home() {
                                                     address: daoList.address,
                                                     name: daoList.opensea.collection.name,
                                                     img: daoList.opensea.collection.image_url,
-                                                    data: JSON.stringify(defendaoData[i]),
+                                                    // data: JSON.stringify(defendaoData[i]),
                                                 },
                                             }}
-                                            as={`/dao/${daoList.opensea.collection.name}`}
+                                            // as={`/dao/${daoList.opensea.collection.name}`}
                                         >
                                             <div className="relative bg-green-400 dark:bg-green-600 p-4 font-extrabold shadow-xl rounded-lg hover:z-50 invisible group-hover:visible">
                                                 Enter
@@ -411,6 +411,8 @@ export default function Home() {
         </>
     );
 }
+
+
 
 // export async function getServerSideProps() {
 //   const options = {
