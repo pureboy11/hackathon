@@ -32,7 +32,9 @@ export default function Home() {
         setLoading(true);
         let tempData = [];
         let osData = [];
+        let statData = [];
         let floorPrice = [];
+
 
         const collist = await defenDaoFactory.getAllCollections();
         const slugs = await defenDaoFactory.getAllSlugs();
@@ -47,8 +49,13 @@ export default function Home() {
             };
 
             const res = await fetch("https://api.opensea.io/api/v1/collection/" + slug, options);
+            const stat = await fetch("https://api.opensea.io/api/v1/collection/" + slug + "/stats", options);
             const result = await res.json();
+            const stat_result = await stat.json()
             osData[index] = result;
+            statData[index] = stat_result
+
+            
         }
 
         for (const [index, collectionAddress] of collist.entries()) {
@@ -64,6 +71,7 @@ export default function Home() {
                 slug: slugs[i],
                 address: collist[i],
                 opensea: osData[i],
+                stats: statData[i],
                 floorPrice: floorPrice[i],
             });
         }
@@ -148,7 +156,7 @@ export default function Home() {
                                     </>
                                 ) : guideBook % 3 === 0 ? (
                                     <>
-                                        <button className="rounded-full bg-indigo-300 w-2 h-2 ml-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
+                                        <button className="rounded-full bg-indigo-300 w-2 h-2 ml-2 mr-2 hover:scale-e110 transition duration-300 transform"></button>
                                         <button className="rounded-full bg-indigo-300 w-2 h-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
                                         <button className="rounded-full bg-indigo-500 w-2 h-2 hover:scale-110 transition duration-300 transform"></button>
                                     </>

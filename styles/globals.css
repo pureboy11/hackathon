@@ -17,12 +17,6 @@ body {
   @apply dark:bg-[#202225] bg-white
 }
 
-.header--animated {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(4px);
-  box-shadow: rgba(255, 255, 255, 0.3);
-}
 
 h1,
 h2,

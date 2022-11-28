@@ -18,8 +18,14 @@ export default function DefenDaoDetail() {
     console.log(router);
     const chartRef = useRef(null);
     const [navigate, setNavigate] = useState("1");
+    const [bidModal, setBidModal] = useState(false);
+
     const data = router.query.data;
     console.log(data);
+
+    const sendtoBlock = () => {
+        return ( <div>"Great"</div>)
+    }
 
     useEffect(() => {
         const chart = chartRef.current;
@@ -75,7 +81,11 @@ export default function DefenDaoDetail() {
                     <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
                         <li className="mr-2">
                             <button
-                                className="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 focus:text-blue-500 text-lg"
+                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg ${
+                                    navigate === !"1"
+                                        ? "bg-none"
+                                        : "text-blue-600 focus:bg-gray-100 active focus:text-blue-500"
+                                } `}
                                 onClick={() => setNavigate(1)}
                             >
                                 Summary
@@ -83,7 +93,11 @@ export default function DefenDaoDetail() {
                         </li>
                         <li className="mr-2">
                             <button
-                                className="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 text-lg"
+                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg ${
+                                    navigate === !"2"
+                                        ? "bg-none"
+                                        : "text-blue-600 focus:bg-gray-100 active focus:text-blue-500"
+                                } `}
                                 onClick={() => setNavigate(2)}
                             >
                                 My Bids
@@ -91,42 +105,105 @@ export default function DefenDaoDetail() {
                         </li>
                         <li className="mr-2">
                             <button
-                                className="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 text-lg"
+                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg ${
+                                    navigate === !"0"
+                                        ? "bg-none"
+                                        : "text-blue-600 focus:bg-gray-100 active focus:text-blue-500"
+                                } `}
                                 onClick={() => setNavigate(0)}
                             >
                                 History
                             </button>
                         </li>
-                        {/* <li>
-                            <a className="inline-block p-4 text-gray-400 rounded-t-lg cursor-not-allowed dark:text-gray-500">
-                                Disabled
-                            </a>
-                        </li> */}
                     </ul>
-                    {/* <button className="p-4 mr-4  mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md">
-                        Summary
-                    </button>
-                    <button className="p-4 mr-4  mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md">
-                        My Bids
-                    </button>
-                    <button className="p-4 mr-4 mb-4 bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 rounded-2xl text-lg shadow-md">
-                        Recent Liq
-                    </button> */}
                 </section>
                 <section className="lg:grid lg:grid-cols-6">
                     <div className="col-span-4 m-4 h-[300px] lg:h-[600px]">
                         <Chart className="" />
                     </div>
-                    <div className="col-span-2 border border-slate-200 m-4 lg:h-[600px] grid grid-row-6 rounded-lg">
-                        <div className="row-span-3 border-white border">Bidding area</div>
-                        <div className="row-span-2 border-white border grid grid-cols-3">
-                            <div className="col-span-1">1</div>
-                            <div className="col-span-1">2</div>
-                            <div className="col-span-1">3</div>
+                    <div className="col-span-2 m-4 lg:h-[600px] grid grid-row-6 rounded-lg">
+                        <div className="row-span-4 p-2 ">
+                            <div className=" mt-2 border border-slate-200 dark:border-slate-600 rounded-lg dark:bg-gray-900/10 bg-gray-300/10 text-gray-800 dark:text-gray-400 h-60 p-4">
+                                <div className="dark:text-gray-200 text-gray-600 text-xl font-bold border-b dark:border-slate-600 border-slate-200 p-2">
+                                    Place a bid
+                                </div>
+                                <div className="h-28">afasf</div>
+                                <div className="grid grid-cols-4">
+                                    <div className="flex justify-start col-span-3 gap-4">
+                                        <button className="col-span-1 border border-white rounded-xl w-24 py-3 hover:bg-slate-200 dark:hover:bg-slate-700">
+                                            25%
+                                        </button>
+                                        <button className="col-span-1 border border-white rounded-xl w-24 py-3 hover:bg-slate-200 dark:hover:bg-slate-700">
+                                            50%
+                                        </button>
+                                        <button className="col-span-1 border border-white rounded-xl w-24 py-3 hover:bg-slate-200 dark:hover:bg-slate-700">
+                                            75%
+                                        </button>
+                                        <button className="col-span-1 border border-white rounded-xl w-24 py-3 hover:bg-slate-200 dark:hover:bg-slate-700">
+                                            100%
+                                        </button>
+                                    </div>
+                                    <div className="col-span-1">
+                                        <input
+                                            className="border border-slate-200 dark:border-slate-600 rounded-lg dark:bg-gray-900/10 bg-gray-300/10 text-gray-800 dark:text-gray-400"
+                                            placeholder="Price"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex justify-end mt-5 gap-4">
+                                <button className="dark:bg-slate-700 bg-slate-300 px-6 py-4 rounded-2xl">H</button>
+                                <button
+                                    className="dark:bg-slate-700 bg-slate-300 px-6 py-4 rounded-2xl"
+                                    onClick={() => setBidModal(true)}
+                                >
+                                    🏷 Make Offer : Target Price
+                                </button>
+                            </div>
                         </div>
-                        <div className="row-span-1 border-white border">Available for Withdrawal</div>
+                        <div className="row-span-1 grid grid-cols-2 p-2 gap-4">
+                            <div className=" mt-2 border border-slate-200 dark:border-slate-600 rounded-lg dark:bg-gray-900/10 bg-gray-300/10 text-gray-800 dark:text-gray-400 h-full p-4">
+                                <div className="dark:text-gray-200 text-gray-600 text-xl font-bold border-b dark:border-slate-600 border-slate-200 p-2">
+                                    CurFloor Price
+                                </div>
+                                <div className="p-4">{router.query.floorPrice || "Loading"} ETH</div>
+                            </div>
+                            <div className=" mt-2 border border-slate-200 dark:border-slate-600 rounded-lg dark:bg-gray-900/10 bg-gray-300/10 text-gray-800 dark:text-gray-400 h-full p-4">
+                                <div className="dark:text-gray-200 text-gray-600 text-xl font-bold border-b dark:border-slate-600 border-slate-200 p-2">
+                                    Target Price
+                                </div>
+                                <div className="p-4">selected Ticket Price</div>
+                            </div>
+                        </div>
+                        <div className="row-span-1 flex items-center justify-center p-2"># text text text</div>
                     </div>
                 </section>
+                {!bidModal ? null : (
+                    <>
+                        <div
+                            className="fixed inset-0 bg-black opacity-20 duration-300"
+                            onClick={() => setBidModal(false)}
+                        ></div>
+
+                        <div className="fixed inset-0 top-1/2 left-1/2 bg-slate-800 rounded-lg h-52 w-96 shadow-xl p-4">
+                            asdfasdf
+                            <div className="relative"></div>
+                            <button className="absolute right-0 top-0" onClick={() => setBidModal(false)}>
+                                {" "}
+                                X{" "}
+                            </button>
+                            <div className="flex justify-end mt-5 gap-4">
+                                <button className="dark:bg-slate-700 bg-slate-300 px-6 py-4 rounded-2xl">H</button>
+                                <button
+                                    className="dark:bg-slate-700 bg-slate-300 px-6 py-4 rounded-2xl"
+                                    onClick={() => sendtoBlock()}
+                                >
+                                    Confirm bid
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </>
     );
