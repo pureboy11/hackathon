@@ -144,10 +144,7 @@ export default function DefenDaoDetail() {
                                         </button>
                                     </div>
                                     <div className="col-span-1">
-                                        <input
-                                            className="border border-slate-200 dark:border-slate-600 rounded-lg dark:bg-gray-900/10 bg-gray-300/10 text-gray-800 dark:text-gray-400"
-                                            placeholder="Price"
-                                        />
+                                       
                                     </div>
                                 </div>
                             </div>
