@@ -180,7 +180,7 @@ export default function DefenDaoDetail() {
                             <div className="controller-minibox h-80">
                                 <div className="mt-2 flex justify-between px-4 py-2">
                                     <div className="flex items-center justify-center text-xl font-bold">
-                                        Target Ticket Price <span> {} </span>
+                                        Target Price <span> {} </span>
                                     </div>
                                     <div className="flex relative">
                                         <input
@@ -191,13 +191,14 @@ export default function DefenDaoDetail() {
                                                    ease-linear transition-all duration-150  focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                             placeholder={"Enter your target price."}
                                             onChange={onChange}
-                                            value={inputValue.toFixed(4)}
+                                            value={inputValue}
+                                            suffix="ETH"
                                         />
                                         <div className="absolute right-0 flex flex-col">
                                             <button
                                                 className="plusBtn"
                                                 type="button"
-                                                onClick={() => setInputValue(inputValue * 1.05.toFixed(4))}
+                                                onClick={() => setInputValue(inputValue * 1.05)}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +218,7 @@ export default function DefenDaoDetail() {
                                             <button
                                                 className="plusBtn"
                                                 type="button"
-                                                onClick={() => setInputValue(inputValue * 0.95.toFixed(4))}
+                                                onClick={() => setInputValue(inputValue * 0.95)}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -235,7 +236,7 @@ export default function DefenDaoDetail() {
                                 </div>
                                 <div className="flex justify-between px-4 py-2">
                                     <div className="flex items-center justify-center text-xl font-bold">
-                                        Tickets count <span> {} </span>
+                                        number of tickets <span> {} </span>
                                     </div>
                                     <div className="flex relative">
                                         <input
@@ -244,9 +245,9 @@ export default function DefenDaoDetail() {
                                             className="py-2 pr-10 h-[52px] text-slate-800 border border-gray-300 text-right 
                                                  bg-gray-50 rounded-lg text-lg shadow-md focus:outline-none 
                                                    ease-linear transition-all duration-150  focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder={"Enter your target price."}
+                                            placeholder={"Ticket"}
                                             onChange={onChangeTicket}
-                                            value={inputTicketCount.toFixed(0)}
+                                            value={inputTicketCount}
                                         />
                                         <div className="absolute right-0 flex flex-col">
                                             <button
@@ -339,12 +340,12 @@ export default function DefenDaoDetail() {
                         </div>
                         <div className="dark:text-gray-500 text-gray-600 text-2xl font-bold px-4">Claim NFT</div>
                         <div className="row-span-1 mb-5 px-2">
-                            <div className="controller-minibox h-40"> Ticket</div>
+                            <div className="controller-minibox h-40"> my asset : {walletAsset} ETH</div>
                             <div className="flex justify-end mt-5 gap-4 mr-4">
                                 <button className="confirmBtn text-2xl" onClick={() => setClaimModal(true)}>
                                     🧾
                                 </button>
-                                <button className="confirmBtn px-6 py-3 text-lg" onClick={() => setClaimModal(true)}> 
+                                <button className="confirmBtn px-6 py-3 text-lg" onClick={() => setClaimModal(true)}>
                                     Claim
                                 </button>
                             </div>
