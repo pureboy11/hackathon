@@ -32,6 +32,9 @@ export const options = {
 };
 
 const labels = [
+  "0.67ETH",
+  "0.6ETH",
+  "0.56ETH",
   "0.52ETH",
   "0.48ETH",
   "0.44ETH",
@@ -47,14 +50,14 @@ export const data = {
   datasets: [
     {
       label: "Current number of tickets",
-      data: [0.3, 0.4, 0.7, 0.1, 0.3, 0.5, 0.7, 0.9],
+      data: [312, 72, 151, 78, 43, 121, 241, 482, 142, 72, 31],
       backgroundColor: "rgba(255, 99, 132, 0.5)",
     },
-    {
-      label: "completed contracts",
-      data: [0.3, 0.4, 0.7, 0.1, 0.3, 0.5, 0.7, 0.9],
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
+    // {
+    //   label: "completed contracts",
+    //   data: [0.3, 0.4, 0.7, 0.1, 0.3, 0.5, 0.7, 0.9],
+    //   backgroundColor: "rgba(53, 162, 235, 0.5)",
+    // },
   ],
 };
 

@@ -35,7 +35,6 @@ export default function Home() {
         let statData = [];
         let floorPrice = [];
 
-
         const collist = await defenDaoFactory.getAllCollections();
         const slugs = await defenDaoFactory.getAllSlugs();
 
@@ -51,11 +50,9 @@ export default function Home() {
             const res = await fetch("https://api.opensea.io/api/v1/collection/" + slug, options);
             const stat = await fetch("https://api.opensea.io/api/v1/collection/" + slug + "/stats", options);
             const result = await res.json();
-            const stat_result = await stat.json()
+            const stat_result = await stat.json();
             osData[index] = result;
-            statData[index] = stat_result
-
-            
+            statData[index] = stat_result;
         }
 
         for (const [index, collectionAddress] of collist.entries()) {
@@ -109,6 +106,7 @@ export default function Home() {
                 img: result.image_url,
                 name: result.name,
                 price: price,
+                collection : result.collection,
             });
         }
 
@@ -235,13 +233,15 @@ export default function Home() {
                                         pathname: `/dao/${nftList.name}`,
                                         query: {
                                             id: nftList.id,
-                                            name: nftList.name,
+                                            name: nftList.collection.name,
+                                            img : nftList.collection.image_url,
+                                            address : nftList.collection.payout_address,
                                             price: nftList.price,
+                                            floorPrice: nftList.collection.stats.floor_price,
                                             nftData: JSON.stringify(nftList),
-                                            data: JSON.stringify(defendaoData),
                                         },
                                     }}
-                                    as={`/dao/${nftList.name}`.replace(/%20/g, "")}
+                                    // as={`/dao/${nftList.name}`.replace(/%20/g, "")}
                                 >
                                     <div
                                         className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
@@ -347,15 +347,16 @@ export default function Home() {
                                         />
                                     </svg>
                                     <span>Loading...</span>
+                                    <div className="h-96"></div>
                                 </div>
                             </>
                         ) : (
                             defendaoData.map((daoList, i) => (
                                 <div
                                     className="relative grid grid-cols-10 py-5 p-2 border-b text-center text-md sm:text-xl border-b-slate-500 bg-slate-100 dark:bg-slate-900 bg-opacity-20 group"
-                                    key={i}
+                                    
                                 >
-                                    <div className="col-span-1 hidden sm:block"># {i + 1}</div>
+                                    <div className="col-span-1 hidden sm:block" key={i}># {i + 1}</div>
                                     <div className="col-span-2 sm:col-span-1 flex justify-center items-center">
                                         {daoList.opensea.collection.image_url !==
                                         (
@@ -411,8 +412,6 @@ export default function Home() {
         </>
     );
 }
-
-
 
 // export async function getServerSideProps() {
 //   const options = {
