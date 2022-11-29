@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Darkmode from "./Darkmode";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Header() {
-  const [ethers, setEthers] = useState("");
-  const [account, setAccount] = useState("noaddress");
-  const [walletType, setWalletType] = useState("");
-  const [animateHeader, setAnimateHeader] = useState(false);
-
   useEffect(() => {
     console.log(window.ethereum);
     // if (typeof window.ethereum !== "undefined") {
@@ -18,14 +14,6 @@ export default function Header() {
       console.log(err);
     }
   }, []);
-
-  const connectWallet = async () => {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    setAccount(accounts[0]);
-    setWalletType("eth");
-  };
 
   // useEffect(() => {
   //   const listener = () => {
@@ -54,14 +42,7 @@ export default function Header() {
           DefenDAO
         </a>
         <div className="ml-auto mr-4 flex items-center">
-          <button
-            className="bg-orange-500 text-white active:bg-blueGray-600 text-xs font-bold uppercase px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 mr-4"
-            type="button"
-            onClick={connectWallet}
-          >
-            {/*<i className="fas fa-arrow-alt-circle-down"></i>*/}
-            Connect metamask
-          </button>
+          <ConnectButton />
           <Darkmode />
         </div>
       </div>
