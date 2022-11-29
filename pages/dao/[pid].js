@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
 import { NumericFormat } from "react-number-format";
+import ConfirmModal from "../../components/ConfirmModal";
 
 // project name -> 가져올수있음
 // floor price -> 가져올수있음
@@ -25,19 +26,21 @@ export default function DefenDaoDetail() {
     const [claimModal, setClaimModal] = useState(false);
     const [infoModal, setInfoModal] = useState(true);
     const [walletAsset, setwalletAsset] = useState("20.14124");
-    const [inputValue, setInputValue] = useState(!router.query.floorPrice ? "null" : router.query.floorPrice / 10);
-    const [inputTicketCount, setInputTicketCount] = useState(
-        !router.query.floorPrice ? "null" : (router.query.floorPrice / 10) * walletAsset
-    );
+    const [inputTargetPrice, setInputTargetPrice] = useState(router.query.floorPrice / 10);
+    const [inputTicketCount, setInputTicketCount] = useState(10);
 
     const data = router.query.data;
-    console.log(data);
+    
+    console.log(data)
+    console.log(queryId)
+    const initPrice = router.query.floorPrice / 10;
+    const initTicket = 10;
     const sendtoBlock = () => {
         return <div>"Great"</div>;
     };
 
     const onChange = (event) => {
-        setInputValue(event.target.value);
+        setInputTargetPrice(event.target.value);
     };
 
     const onChangeTicket = (event) => {
@@ -101,10 +104,10 @@ export default function DefenDaoDetail() {
                                     ) : null}
                                 </div>
                                 <div>
-                                    <div className="text-4xl mb-auto font-semibold dark:text-slate-50">
+                                    <div className="text-4xl mb-auto font-semibold dark:text-slate-50 font-pop">
                                         {router.query.name}
                                     </div>
-                                    <div className="text-2xl font-semibold text-slate-400 mt-2">
+                                    <div className="text-2xl font-semibold text-slate-400 mt-2 font-pop">
                                         Floor Price : {router.query.floorPrice || "Loading"} ETH
                                     </div>
                                 </div>
@@ -133,10 +136,7 @@ export default function DefenDaoDetail() {
                     <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
                         <li className="mr-2">
                             <button
-                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg ${
-                                    navigate === !"1"
-                                        ? "bg-none"
-                                        : "text-blue-600 focus:bg-gray-100 active focus:text-blue-500"
+                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg 
                                 } `}
                                 onClick={() => setNavigate(1)}
                             >
@@ -145,10 +145,7 @@ export default function DefenDaoDetail() {
                         </li>
                         <li className="mr-2">
                             <button
-                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg ${
-                                    navigate === !"2"
-                                        ? "bg-none"
-                                        : "text-blue-600 focus:bg-gray-100 active focus:text-blue-500"
+                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg 
                                 } `}
                                 onClick={() => setNavigate(2)}
                             >
@@ -157,10 +154,7 @@ export default function DefenDaoDetail() {
                         </li>
                         <li className="mr-2">
                             <button
-                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg ${
-                                    navigate === !"0"
-                                        ? "bg-none"
-                                        : "text-blue-600 focus:bg-gray-100 active focus:text-blue-500"
+                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg 
                                 } `}
                                 onClick={() => setNavigate(0)}
                             >
@@ -176,29 +170,28 @@ export default function DefenDaoDetail() {
                     </div>
                     <div className="col-span-1 m-4 lg:h-[650px] rounded-lg grid grid-row-8">
                         <div className="row-span-6 p-2">
-                            <div className="dark:text-gray-500 text-gray-600 text-2xl font-bold px-2">Place a bid</div>
-                            <div className="controller-minibox h-80">
-                                <div className="mt-2 flex justify-between px-4 py-2">
-                                    <div className="flex items-center justify-center text-xl font-bold">
-                                        Target Price <span> {} </span>
-                                    </div>
+                            <div className="controller-minibox h-84">
+                                <div className="font-def font-extrabold text-2xl text-gray-600 dark:text-gray-400 mr-auto">
+                                    Target Price
+                                </div>
+                                <div className="mt-2 flex justify-end items-center p-2">
                                     <div className="flex relative">
-                                        <input
-                                            type=""
-                                            id="inputPrice"
-                                            className="py-2 pr-10 h-[52px] text-slate-800 border border-gray-300 text-right 
-                                                 bg-gray-50 rounded-lg text-lg shadow-md focus:outline-none 
-                                                   ease-linear transition-all duration-150  focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder={"Enter your target price."}
-                                            onChange={onChange}
-                                            value={inputValue}
+                                        <NumericFormat
+                                            className="py-2 pr-12 h-[52px] text-slate-800 text-right 
+                                            rounded-lg text-lg shadow-md focus:outline-none font-def
+                                              dark:bg-gray-300  dark:text-black"
+                                            value={inputTargetPrice}
+                                            placeholder="Enter your target price."
+                                            decimalScale={3}
+                                            thousandSeparator=","
+                                            displayType="input"
                                             suffix="ETH"
                                         />
                                         <div className="absolute right-0 flex flex-col">
                                             <button
                                                 className="plusBtn"
                                                 type="button"
-                                                onClick={() => setInputValue(inputValue * 1.05)}
+                                                onClick={() => setInputTargetPrice(inputTargetPrice * 1.05)}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -209,8 +202,8 @@ export default function DefenDaoDetail() {
                                                     className="w-6 h-6"
                                                 >
                                                     <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
                                                         d="M12 6v12m6-6H6"
                                                     />
                                                 </svg>
@@ -218,7 +211,7 @@ export default function DefenDaoDetail() {
                                             <button
                                                 className="plusBtn"
                                                 type="button"
-                                                onClick={() => setInputValue(inputValue * 0.95)}
+                                                onClick={() => setInputTargetPrice(inputTargetPrice * 0.95)}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -228,26 +221,54 @@ export default function DefenDaoDetail() {
                                                     stroke="currentColor"
                                                     className="w-6 h-6"
                                                 >
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
                                                 </svg>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-between px-4 py-2">
-                                    <div className="flex items-center justify-center text-xl font-bold">
-                                        number of tickets <span> {} </span>
-                                    </div>
+                                <div className="flex justify-end col-span-4 gap-2 mb-7 mt-1 mr-2">
+                                    <button className="ratio-box " onClick={() => setInputTargetPrice(initPrice)}>
+                                        0%
+                                    </button>
+                                    <button
+                                        className="ratio-box "
+                                        onClick={() => setInputTargetPrice(initPrice * 0.97)}
+                                    >
+                                        -3%
+                                    </button>
+                                    <button
+                                        className="ratio-box "
+                                        onClick={() => setInputTargetPrice(initPrice * 0.95)}
+                                    >
+                                        -5%
+                                    </button>
+                                    <button className="ratio-box" onClick={() => setInputTargetPrice(initPrice * 0.93)}>
+                                        -7%
+                                    </button>
+                                    <button className="ratio-box" onClick={() => setInputTargetPrice(initPrice * 0.9)}>
+                                        -10%
+                                    </button>
+                                    <button className="ratio-box" onClick={() => setInputTargetPrice(initPrice * 0.8)}>
+                                        -20%
+                                    </button>
+                                </div>
+
+                                <div className="font-def font-extrabold text-2xl text-gray-600 dark:text-gray-400 mr-auto mt-10">
+                                    number of tickets
+                                </div>
+                                <div className="mt-2 flex justify-end items-center p-2">
                                     <div className="flex relative">
-                                        <input
-                                            type=""
-                                            id="inputPrice"
-                                            className="py-2 pr-10 h-[52px] text-slate-800 border border-gray-300 text-right 
-                                                 bg-gray-50 rounded-lg text-lg shadow-md focus:outline-none 
-                                                   ease-linear transition-all duration-150  focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder={"Ticket"}
-                                            onChange={onChangeTicket}
+                                        <NumericFormat
+                                            className="py-2 pr-12 h-[52px] text-slate-800 text-right 
+                                           rounded-lg text-lg shadow-md focus:outline-none font-def
+                                           dark:bg-gray-300  dark:text-black"
                                             value={inputTicketCount}
+                                            placeholder="10 Tickets = 1 NFT"
+                                            decimalScale={0}
+                                            thousandSeparator=","
+                                            displayType="input"
+                                            suffix="Tickets"
                                         />
                                         <div className="absolute right-0 flex flex-col">
                                             <button
@@ -264,8 +285,8 @@ export default function DefenDaoDetail() {
                                                     className="w-6 h-6"
                                                 >
                                                     <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
                                                         d="M12 6v12m6-6H6"
                                                     />
                                                 </svg>
@@ -283,52 +304,59 @@ export default function DefenDaoDetail() {
                                                     stroke="currentColor"
                                                     className="w-6 h-6"
                                                 >
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
                                                 </svg>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="h-10"> </div>
-                                <div className="flex justify-end">
-                                    <div className="flex justify-end col-span-3 gap-2 mr-4">
+                                <div className="flex justify-end mt-1">
+                                    <div className="flex justify-end col-span-4 gap-2 mr-2">
                                         <button
                                             className="col-span-1 ratio-box "
-                                            onClick={() => setInputValue(walletAsset / 4)}
+                                            onClick={() =>
+                                                setInputTicketCount(((walletAsset / inputTargetPrice) * 1) / 4)
+                                            }
                                         >
                                             25%
                                         </button>
                                         <button
                                             className="col-span-1 ratio-box"
-                                            onClick={() => setInputValue(walletAsset / 2)}
+                                            onClick={() =>
+                                                setInputTicketCount(((walletAsset / inputTargetPrice) * 1) / 2)
+                                            }
                                         >
                                             50%
                                         </button>
                                         <button
                                             className="col-span-1 ratio-box"
-                                            onClick={() => setInputValue((walletAsset * 3) / 4)}
+                                            onClick={() =>
+                                                setInputTicketCount(((walletAsset / inputTargetPrice) * 3) / 4)
+                                            }
                                         >
                                             75%
                                         </button>
                                         <button
                                             className="col-span-1 ratio-box"
-                                            onClick={() => setInputValue(walletAsset)}
+                                            onClick={() => setInputTicketCount(walletAsset / inputTargetPrice)}
                                         >
-                                            100%
+                                            max
                                         </button>
                                     </div>
-                                    <div className="col-span-1"></div>
                                 </div>
                             </div>
                             <div className="flex justify-end mt-5 gap-4 mr-4">
                                 <button className="confirmBtn text-2xl" onClick={() => setBidModal(true)}>
                                     🧾
                                 </button>
-                                <button className="confirmBtn px-6 py-3 text-lg" onClick={() => setBidModal(true)}>
-                                    <span className="text-2xl">🏷</span> Make Offer :{" "}
+                                <button
+                                    className="confirmBtn px-6 py-3 text-lg font-def"
+                                    onClick={() => setBidModal(true)}
+                                >
+                                    Make Offer :{" "}
                                     <NumericFormat
                                         className=""
-                                        value={inputValue * inputTicketCount}
+                                        value={inputTargetPrice * inputTicketCount}
                                         prefix={""}
                                         decimalScale={3}
                                         thousandSeparator=","
@@ -338,14 +366,17 @@ export default function DefenDaoDetail() {
                                 </button>
                             </div>
                         </div>
-                        <div className="dark:text-gray-500 text-gray-600 text-2xl font-bold px-4">Claim NFT</div>
+                        <div className="px-4 title-text mt-5">Claim NFT</div>
                         <div className="row-span-1 mb-5 px-2">
                             <div className="controller-minibox h-40"> my asset : {walletAsset} ETH</div>
                             <div className="flex justify-end mt-5 gap-4 mr-4">
                                 <button className="confirmBtn text-2xl" onClick={() => setClaimModal(true)}>
                                     🧾
                                 </button>
-                                <button className="confirmBtn px-6 py-3 text-lg" onClick={() => setClaimModal(true)}>
+                                <button
+                                    className="confirmBtn px-6 py-3 text-lg font-def"
+                                    onClick={() => setClaimModal(true)}
+                                >
                                     Claim
                                 </button>
                             </div>
@@ -354,70 +385,14 @@ export default function DefenDaoDetail() {
                 </section>
                 {/* Bid Modal  */}
                 {!bidModal ? null : (
-                    <section>
-                        <div
-                            className="fixed inset-0 bg-black opacity-80 duration-300 z-30"
-                            onClick={() => setBidModal(false)}
-                        ></div>
-
-                        <div className="absolute bottom-1/2 right-8 bg-slate-800 rounded-lg h-60 w-96 shadow-xl p-4 z-50">
-                            Confirm bid
-                            <div className="relative"></div>
-                            <button
-                                className="absolute right-3 top-3 hover:-rotate-90 duration-300"
-                                onClick={() => setBidModal(false)}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="currentColor"
-                                    className="w-6 h-6"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                            <div className="flex justify-end mt-5 gap-4">
-                                <div className="mt-4 bg-slate-700 p-4 w-40 rounded-xl mx-auto">
-                                    <NumericFormat
-                                        className="text-white text-right"
-                                        value={inputTicketCount}
-                                        prefix={""}
-                                        decimalScale={3}
-                                        thousandSeparator=","
-                                        displayType="text"
-                                        suffix="Tickets"
-                                    />{" "}
-                                </div>
-                                <div className="mt-4 bg-slate-700 p-4 w-40 rounded-xl mx-auto">
-                                    <NumericFormat
-                                        className="text-white text-right"
-                                        value={inputValue}
-                                        prefix={""}
-                                        decimalScale={3}
-                                        thousandSeparator=","
-                                        displayType="text"
-                                        suffix="ETH"
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex justify-end mt-5 gap-4">
-                                <button
-                                    className="dark:bg-slate-700 bg-slate-300 px-6 py-4 rounded-2xl"
-                                    onClick={() => setBidModal(false)}
-                                >
-                                    cancel
-                                </button>
-                                <button
-                                    className="dark:bg-slate-700 bg-slate-300 px-6 py-4 rounded-2xl"
-                                    onClick={() => sendtoBlock()}
-                                >
-                                    Confirm bid
-                                </button>
-                            </div>
-                        </div>
-                    </section>
+                    <ConfirmModal
+                        inputTargetPrice={inputTargetPrice}
+                        inputTicketCount={inputTicketCount}
+                        setInputTargetPrice={setInputTargetPrice}
+                        setInputTicketCount={setInputTicketCount}
+                        bidModal={bidModal}
+                        setBidModal={setBidModal}
+                    />
                 )}
             </div>
         </>

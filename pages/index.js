@@ -33,6 +33,7 @@ export default function Home() {
         let tempData = [];
         let osData = [];
         let statData = [];
+        let eventData = [];
         let floorPrice = [];
 
         const collist = await defenDaoFactory.getAllCollections();
@@ -44,15 +45,21 @@ export default function Home() {
                 method: "GET",
                 headers: {
                     accept: "application/json",
+                    "X-API-KEY": "4e9eeab87bc94be3a4f054a7b545e27d",
                 },
             };
 
             const res = await fetch("https://api.opensea.io/api/v1/collection/" + slug, options);
             const stat = await fetch("https://api.opensea.io/api/v1/collection/" + slug + "/stats", options);
+            const event = await fetch("https://api.opensea.io/api/v1/events?collection_slug=" + slug, options);
             const result = await res.json();
             const stat_result = await stat.json();
+            const event_result = await event.json();
+            const assetEvent = await event_result.asset_events;
+            console.log(assetEvent);
             osData[index] = result;
             statData[index] = stat_result;
+            eventData[index] = event_result;
         }
 
         for (const [index, collectionAddress] of collist.entries()) {
@@ -69,23 +76,23 @@ export default function Home() {
                 address: collist[i],
                 opensea: osData[i],
                 stats: statData[i],
+                events: eventData[i],
                 floorPrice: floorPrice[i],
             });
         }
-
         setdefendaData(tempData);
-        setLoading(false);
-        console.log(tempData);
+        console.log(defendaoData);
     }
 
     //NFT Fetch//
     async function generateNft() {
         const itemArray = [];
+        const osArray = [];
         // id image name
         setLoading(true);
 
         const recentSolds = await defenDaoFactory.getRecentSolds();
-        console.log({ recent: recentSolds });
+
         for (const [index, sold] of recentSolds.entries()) {
             const options = {
                 method: "GET",
@@ -106,13 +113,13 @@ export default function Home() {
                 img: result.image_url,
                 name: result.name,
                 price: price,
-                collection : result.collection,
+                collection: result.collection,
             });
         }
 
         setNftpuller(itemArray);
         console.log(itemArray);
-        setLoading(false);
+        
     }
 
     const onChange = (event) => {
@@ -130,6 +137,7 @@ export default function Home() {
     useEffect(() => {
         getCollection();
         generateNft();
+        setLoading(false);
     }, []);
 
     return (
@@ -138,8 +146,8 @@ export default function Home() {
             <div className="mx-3">
                 <section className="text-gray-600 body-font relative">
                     <div className="INFO lg:flex items-center justify-center mt-2 container mx-auto relative">
-                        <div className="sm:mt-16 mt-10 mb-10 mx-2 p-5 flex justify-center items-center bg-slate-200 dark:bg-slate-800 rounded-xl w-full h-40">
-                            <div className="m-3 text-indigo-400 uppercase font-pop text-3xl font-semibold z-10 absolute right-4 top-12">
+                        <div className="sm:mt-16 mt-10 mb-10 mx-2 p-5 flex justify-center items-center bg-slate-100 dark:bg-slate-900 rounded-xl shadow-md ring-1 hover:ring-2 ring-slate-200/20 w-full h-40">
+                            <div className="m-3 text-indigo-400 uppercase font-def text-3xl font-semibold z-10 absolute right-4 top-12">
                                 {guideBook % 3 === 1 ? (
                                     <>
                                         <button className="rounded-full bg-indigo-500 w-2 h-2 ml-2 mr-2 hover:scale-110 transition duration-300 transform"></button>
@@ -164,7 +172,7 @@ export default function Home() {
                             {guideBook === 1 ? (
                                 <section className="section1">
                                     <div className="items-center">
-                                        <div className="text-xl font-semibold leading-relaxed text-slate-200">
+                                        <div className="text-2xl font-semibold leading-relaxed dark:text-slate-200 font-def">
                                             We are the DAO defending NFT prices.
                                         </div>
                                     </div>
@@ -172,7 +180,7 @@ export default function Home() {
                             ) : guideBook === 2 ? (
                                 <section className="section2">
                                     <div className="items-center">
-                                        <div className="text-xl font-semibold leading-relaxed text-slate-200">
+                                        <div className="text-2xl font-semibold leading-relaxed dark:text-slate-200 font-def">
                                             One of the DAO members will purchase the NFT that come as a quick sale with
                                             randomly.
                                         </div>
@@ -181,7 +189,7 @@ export default function Home() {
                             ) : guideBook === 0 ? (
                                 <section className="section3">
                                     <div className="items-center">
-                                        <div className="text-xl font-semibold leading-relaxed text-slate-200">
+                                        <div className="text-2xl font-semibold leading-relaxed dark:text-slate-200 font-def">
                                             3 page comment (우리 서비스 3 step 인지 시키기!)
                                         </div>
                                     </div>
@@ -201,11 +209,21 @@ export default function Home() {
                     </div>
                 </section>
                 <section className="mx-auto container sm:p-4 p-2 mb-10">
-                    <p className="text-xl sm:text-3xl font-extrabold m-2">Latest Transfers</p>
-                    <div className="border-2 dark:border-slate-800 border-slate-100 rounded-lg p-6 overflow-x-auto w-full grid grid-flow-col gap-8 shadow-md dark:shadow-slate-600 shadow-slate-200 scroll-smooth">
+                    <div className="flex items-center justify-between">
+                        <p className="text-xl sm:text-3xl font-extrabold m-2 dark:text-slate-300/50 text-slate-700 -tracking-[0.7px]">
+                            Latest Transfers
+                        </p>
+                        <div className="justify-end">
+                            <button className="green-Btn">BAYC</button>
+                            <button className="green-Btn">Doodles</button>
+                            <button className="green-Btn">Azuki</button>
+                            <button className="green-Btn">YuGiYn</button>
+                        </div>
+                    </div>
+                    <div className="bg-slate-100 dark:bg-slate-900/20 rounded-xl p-4 overflow-x-auto grid grid-flow-col dark:shadow-slate-700 shadow-md scroll-smooth">
                         {loading ? (
                             <>
-                                <div className="flex justify-center items-center py-10 p-2 animate-pulse">
+                                <div className="flex justify-center items-center py-10 p-2 animate-pulse font-def">
                                     <svg
                                         aria-hidden="true"
                                         className=" w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -234,11 +252,11 @@ export default function Home() {
                                         query: {
                                             id: nftList.id,
                                             name: nftList.collection.name,
-                                            img : nftList.collection.image_url,
-                                            address : nftList.collection.payout_address,
+                                            img: nftList.collection.image_url,
+                                            address: nftList.collection.payout_address,
                                             price: nftList.price,
                                             floorPrice: nftList.collection.stats.floor_price,
-                                            nftData: JSON.stringify(nftList),
+                                            // nftData: JSON.stringify(nftList),
                                         },
                                     }}
                                     // as={`/dao/${nftList.name}`.replace(/%20/g, "")}
@@ -290,7 +308,9 @@ export default function Home() {
                 <div className="my-20 sm:hidden"></div>
                 <section className="sm:p-4 p-2 rounded-md w-full container mx-auto my-4">
                     <div className="flex items-center justify-between mb-2">
-                        <p className="text-xl sm:text-3xl font-extrabold m-2">DefenDao List</p>
+                        <p className="text-xl sm:text-3xl font-extrabold m-2 dark:text-slate-300/50 text-slate-700 -tracking-[0.7px]">
+                            DefenDao List
+                        </p>
                         <div className="flex items-center justify-end">
                             <div className="flex bg-gray-50 dark:bg-gray-700 items-center p-2 rounded-md">
                                 <svg
@@ -318,18 +338,18 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="container mx-auto h-max mb-40 hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg bg-inherit shadow-md transition-all">
-                        <div className="grid grid-cols-10 font-semibold text-center text-md sm:text-xl py-4 bg-slate-200 dark:bg-slate-800 p-2 rounded-t-xl text-slate-700 dark:text-slate-400">
+                        <div className="grid grid-cols-10 font-semibold font-def text-center text-md sm:text-xl py-4 bg-slate-200 dark:bg-slate-800 p-2 rounded-t-xl text-slate-700 dark:text-slate-400">
                             <div className="col-span-1 hidden sm:block">Rank</div>
                             <div className="col-span-2 sm:col-span-1"></div>
                             <div className="col-span-3 ">CollectionName</div>
                             <div className="col-span-3 sm:col-span-1">Tickets</div>
                             <div className="col-span-2 hidden sm:block">TVL</div>
-                            <div className="col-span-1 hidden sm:block">FloorPrice</div>
+                            <div className="col-span-1 hidden sm:block">CurFloorPrice</div>
                             <div className="col-span-1 mx-4"></div>
                         </div>
                         {loading ? (
                             <>
-                                <div className="relative flex justify-center items-center py-10 p-2 border-b px-auto border-b-slate-500 bg-slate-200 dark:bg-slate-900 bg-opacity-20 animate-pulse">
+                                <div className="relative flex justify-center items-center py-10 p-2 border-b px-auto border-b-slate-500 bg-slate-200 dark:bg-slate-900 bg-opacity-20 animate-pulse font-def">
                                     <svg
                                         aria-hidden="true"
                                         className=" w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -352,11 +372,10 @@ export default function Home() {
                             </>
                         ) : (
                             defendaoData.map((daoList, i) => (
-                                <div
-                                    className="relative grid grid-cols-10 py-5 p-2 border-b text-center text-md sm:text-xl border-b-slate-500 bg-slate-100 dark:bg-slate-900 bg-opacity-20 group"
-                                    
-                                >
-                                    <div className="col-span-1 hidden sm:block" key={i}># {i + 1}</div>
+                                <div className="relative grid grid-cols-10 py-5 p-2 border-b dark:text-slate-300 text-center text-md sm:text-xl dark:border-b-slate-500 border-b-slate-300 bg-slate-100 dark:bg-slate-900 bg-opacity-20 group">
+                                    <div className="col-span-1 m-auto hidden italic sm:block " key={i}>
+                                        <div># {i + 1}</div>
+                                    </div>
                                     <div className="col-span-2 sm:col-span-1 flex justify-center items-center">
                                         {daoList.opensea.collection.image_url !==
                                         (
@@ -371,37 +390,40 @@ export default function Home() {
                                                     height={100}
                                                     unoptimized="true"
                                                     alt="CollectionImg"
-                                                    className=" rounded-xl"
+                                                    className="rounded-xl group-hover:scale-110 duration-300 group-hover:ring-slate-600 group-hover:dark:ring-slate-200 group-hover:ring-2"
                                                     aria-placeholder="CollectionImg"
                                                 />
                                             </>
                                         ) : null}
                                     </div>
-                                    <div className="col-span-3 ">{daoList.opensea.collection.name}</div>
-                                    <div className="col-span-3 sm:col-span-1">🏷 1412</div>
-                                    <div className="col-span-2 hidden sm:block">142,123 USDT </div>
-                                    <div className="col-span-1 hidden sm:block"> {daoList.floorPrice} ETH</div>
-                                    <div className="col-span-1 mx-4 flex justify-center items-center">
+                                    <div className="col-span-3 m-auto font-def">{daoList.opensea.collection.name}</div>
+                                    <div className="col-span-3 sm:col-span-1 m-auto"> 1412</div>
+                                    <div className="col-span-2 hidden sm:block m-auto">142,123 USDT </div>
+                                    <div className="col-span-1 hidden sm:block m-auto">
+                                        {" "}
+                                        {daoList.stats.stats.floor_price} ETH{" "}
+                                    </div>
+                                    <div className="col-span-1 mx-4 flex justify-center items-center m-auto">
                                         <Link
                                             id="link"
                                             href={{
                                                 pathname: `/dao/${daoList.opensea.collection.name}`,
                                                 query: {
                                                     id: daoList.id,
-                                                    floorPrice: daoList.floorPrice,
                                                     address: daoList.address,
                                                     name: daoList.opensea.collection.name,
+                                                    floorPrice: daoList.stats.stats.floor_price,
                                                     img: daoList.opensea.collection.image_url,
                                                     // data: JSON.stringify(defendaoData[i]),
                                                 },
                                             }}
                                             // as={`/dao/${daoList.opensea.collection.name}`}
                                         >
-                                            <div className="relative bg-green-400 dark:bg-green-600 p-4 font-extrabold shadow-xl rounded-lg hover:z-50 invisible group-hover:visible">
+                                            <div className="relative bg-green-400 dark:bg-green-600 p-4 font-extrabold shadow-md rounded-lg hover:z-50 invisible group-hover:visible z-50">
                                                 Enter
                                             </div>
                                         </Link>
-                                        {/* <div className="absolute left-0 top-0 w-full h-32 hover:bg-slate-700 hover:bg-opacity-20 z-0"></div> */}
+                                        <div className="absolute left-0 top-0 w-full h-[140px] hover:bg-slate-800 hover:bg-opacity-40 z-0"></div>
                                     </div>
                                 </div>
                             ))

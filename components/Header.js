@@ -51,7 +51,7 @@ export default function Header() {
         className={`sticky top-0 z-20 flex py-3 shadow-md my-auto bg-white dark:bg-[#1B1E25] header"
         }`}
       >
-        <Link href="/" id="link" className="mx-5 my-auto text-gray-400">
+        <Link href="/" id="link" className="mx-5 my-auto text-gray-400 title-text">
           DefenDAO
         </Link>
         <div className="ml-auto mr-4 flex items-center">
