@@ -191,13 +191,13 @@ export default function DefenDaoDetail() {
                                                    ease-linear transition-all duration-150  focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                             placeholder={"Enter your target price."}
                                             onChange={onChange}
-                                            value={inputValue}
+                                            value={inputValue.toFixed(4)}
                                         />
                                         <div className="absolute right-0 flex flex-col">
                                             <button
                                                 className="plusBtn"
                                                 type="button"
-                                                onClick={() => setInputValue(inputValue * 1.05)}
+                                                onClick={() => setInputValue(inputValue * 1.05.toFixed(4))}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +217,7 @@ export default function DefenDaoDetail() {
                                             <button
                                                 className="plusBtn"
                                                 type="button"
-                                                onClick={() => setInputValue(inputValue * 0.95)}
+                                                onClick={() => setInputValue(inputValue * 0.95.toFixed(4))}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -246,7 +246,7 @@ export default function DefenDaoDetail() {
                                                    ease-linear transition-all duration-150  focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                             placeholder={"Enter your target price."}
                                             onChange={onChangeTicket}
-                                            value={inputTicketCount}
+                                            value={inputTicketCount.toFixed(0)}
                                         />
                                         <div className="absolute right-0 flex flex-col">
                                             <button
