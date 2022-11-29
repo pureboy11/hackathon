@@ -119,7 +119,6 @@ export default function Home() {
 
         setNftpuller(itemArray);
         console.log(itemArray);
-        
     }
 
     const onChange = (event) => {
@@ -244,9 +243,8 @@ export default function Home() {
                                 </div>
                             </>
                         ) : (
-                            nftpuller.map((nftList, id) => (
+                            nftpuller.map((nftList) => (
                                 <Link
-                                    key={id}
                                     href={{
                                         pathname: `/dao/${nftList.name}`,
                                         query: {
@@ -260,10 +258,10 @@ export default function Home() {
                                         },
                                     }}
                                     // as={`/dao/${nftList.name}`.replace(/%20/g, "")}
+                                    key={nftList.id}
                                 >
                                     <div
                                         className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
-                                        key={nftList.id}
                                     >
                                         <div className="flex flex-col asepct-square overflow-hidden items-center">
                                             {nftList.img !== null ? (
@@ -372,11 +370,11 @@ export default function Home() {
                             </>
                         ) : (
                             defendaoData.map((daoList, i) => (
-                                <div className="relative grid grid-cols-10 py-5 p-2 border-b dark:text-slate-300 text-center text-md sm:text-xl dark:border-b-slate-500 border-b-slate-300 bg-slate-100 dark:bg-slate-900 bg-opacity-20 group">
-                                    <div className="col-span-1 m-auto hidden italic sm:block " key={i}>
+                                <div className="relative grid grid-cols-10 py-5 p-2 border-b dark:text-slate-300 text-center text-md sm:text-xl dark:border-b-slate-500 border-b-slate-300 bg-slate-100 dark:bg-slate-900 bg-opacity-20 group" key={daoList.id}>
+                                    <div className="col-span-1 m-auto hidden italic sm:block" >
                                         <div># {i + 1}</div>
                                     </div>
-                                    <div className="col-span-2 sm:col-span-1 flex justify-center items-center">
+                                    <div className="col-span-2 sm:col-span-1 flex justify-center items-center" >
                                         {daoList.opensea.collection.image_url !==
                                         (
                                             <>
