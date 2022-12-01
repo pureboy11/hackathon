@@ -78,6 +78,7 @@ export default function DefenDaoDetail() {
   const initTicket = 10;
 
   async function sendtoBlock() {
+    // TO : 용석 여기다가 로딩 띄워주세용
     setLoading(true);
     const value = inputTargetPrice * inputTicketCount;
     await signer.sendTransaction({
