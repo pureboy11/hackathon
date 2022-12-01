@@ -123,7 +123,7 @@ export default function Home() {
         img: imgUrl,
         name: nftName,
         price: price,
-        daoAddress: contAddr,
+        address: contAddr,
         claimer: buyer,
       });
     }
@@ -257,6 +257,7 @@ export default function Home() {
                       price: nftList.price,
                       nftData: JSON.stringify(nftList),
                       data: JSON.stringify(defendaoData),
+                      address: nftList.address,
                     },
                   }}
                   as={`/dao/${nftList.name}`.replace(/%20/g, "")}
