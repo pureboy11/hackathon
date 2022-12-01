@@ -1,19 +1,19 @@
 import { NumericFormat } from "react-number-format";
 
-export default function ConfirmModal(props) {
+export default function CancelModal(props) {
     return (
         <section>
             <div
                 className="fixed inset-0 bg-black opacity-80 duration-300 z-30"
-                onClick={() => props.setBidModal(false)}
+                onClick={() => props.setCancelModal(false)}
             ></div>
 
             <div className="absolute bottom-1/2 right-8 bg-slate-500 dark:bg-slate-800 rounded-lg w-1/5 shadow-xl p-4 z-50 text-lg">
-                Confirm bid
+                Cancel bid
                 <div className="relative"></div>
                 <button
                     className="absolute right-3 top-3 hover:-rotate-90 duration-300"
-                    onClick={() => props.setBidModal(false)}
+                    onClick={() => props.setCancelModal(false)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -66,9 +66,7 @@ export default function ConfirmModal(props) {
                         </>
                     ) : (
                         <>
-                            <button
-                                className="dark:bg-slate-600 bg-slate-500 w-32 h-16 px-2 text-sm rounded-2xl dark:border-slate-900 border border-slate-300 shadow-lg flex justify-center items-center"
-                            >
+                            <button className="dark:bg-slate-600 bg-slate-500 w-32 h-16 px-2 text-sm rounded-2xl dark:border-slate-900 border border-slate-300 shadow-lg flex justify-center items-center">
                                 <svg
                                     aria-hidden="true"
                                     className=" w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
