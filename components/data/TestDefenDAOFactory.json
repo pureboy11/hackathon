@@ -183,6 +183,21 @@
             "internalType": "address",
             "name": "claimer",
             "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "defenDAO",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "tokenName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "tokenImage",
+            "type": "string"
           }
         ],
         "internalType": "struct IDefenDAOFactory.RecentSold[]",
@@ -198,6 +213,11 @@
       {
         "internalType": "address",
         "name": "token_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "marketplaceAddress_",
         "type": "address"
       },
       {
@@ -242,6 +262,16 @@
         "internalType": "address",
         "name": "claimer_",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "tokenName_",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "image_",
+        "type": "string"
       }
     ],
     "name": "mockRecordRecentSold",
@@ -291,6 +321,21 @@
         "internalType": "address",
         "name": "claimer",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "defenDAO",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "tokenName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "tokenImage",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
