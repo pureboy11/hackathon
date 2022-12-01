@@ -7,8 +7,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { BigNumber, ethers } from "ethers";
 import DefenDAO from "../../components/data/TestDefenDAO.json";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
+import { useAccount, useSigner, useContract } from "wagmi";
 import { NumericFormat } from "react-number-format";
 import ConfirmModal from "../../components/ConfirmModal";
 import ClaimModal from "../../components/ClaimModal";
@@ -27,6 +26,8 @@ export default function DefenDaoDetail() {
   // console.log({ queryId: queryId });
   // console.log({ query: router.query });
   const chartRef = useRef(null);
+  const [priceUnit, setPriceUnit] = useState(1);
+  const [initPrice, setInitPrice] = useState(1);
   const [nftpuller, setNftpuller] = useState([]);
   const [loading, setLoading] = useState(true);
   const [navigate, setNavigate] = useState(1);
@@ -34,9 +35,7 @@ export default function DefenDaoDetail() {
   const [claimModal, setClaimModal] = useState(false);
   const [infoModal, setInfoModal] = useState(true);
   const [walletAsset, setwalletAsset] = useState("20.14124");
-  const [inputTargetPrice, setInputTargetPrice] = useState(
-    router.query.floorPrice / 10
-  );
+  const [inputTargetPrice, setInputTargetPrice] = useState(1);
   const [inputTicketCount, setInputTicketCount] = useState(10);
   const provider = new ethers.providers.JsonRpcProvider(
     "http://127.0.0.1:8545/"
@@ -47,6 +46,8 @@ export default function DefenDaoDetail() {
     DefenDAOFactory,
     provider
   );
+  const { data: signer, isError, isLoading } = useSigner();
+  const defenDAO = new ethers.Contract(defenDAOAddress, DefenDAO, provider);
 
   const [allUserData, setAllUserData] = useState({
     labels: [],
@@ -74,14 +75,26 @@ export default function DefenDaoDetail() {
   });
 
   const data = router.query.data;
-
-  console.log(data);
-  console.log(queryId);
-  const initPrice = router.query.floorPrice / 10;
   const initTicket = 10;
-  const sendtoBlock = () => {
-    return <div>"Great"</div>;
-  };
+
+  async function sendtoBlock() {
+    // TO : 용석 여기다가 로딩 띄워주세용
+    setLoading(true);
+    const value = inputTargetPrice * inputTicketCount;
+    await signer.sendTransaction({
+      to: defenDAO.address,
+      value: ethers.utils.parseEther(value.toString()),
+    });
+    await defenDAO
+      .connect(signer)
+      .makeOffer(
+        ethers.utils.parseEther(inputTargetPrice.toString()),
+        inputTicketCount
+      );
+    await fetchOnChainData();
+    setBidModal(false);
+    setLoading(false);
+  }
 
   const onChange = (event) => {
     setInputTargetPrice(event.target.value);
@@ -163,15 +176,17 @@ export default function DefenDaoDetail() {
         {
           label: "My tickets",
           data: [],
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
+          backgroundColor: "rgba(55, 99, 132, 0.9)",
         },
       ],
       totalTickets: 0,
       totalLiq: BigNumber.from(0),
     };
-    const defenDAO = new ethers.Contract(defenDAOAddress, DefenDAO, provider);
 
     const unit = ethers.utils.formatEther(await defenDAO.offerPriceUnit());
+    setPriceUnit(Number(unit));
+    setInitPrice(Number(unit));
+    setInputTargetPrice(Number(unit));
     const floorPrice = ethers.utils.formatEther(await defenDAO.curFloorPrice());
     const len = Math.floor(floorPrice / unit);
 
@@ -276,8 +291,12 @@ export default function DefenDaoDetail() {
                 </div>
               </div>
               <div className="flex ">
-                <div className="border p-4 mr-4">Total Ticket</div>
-                <div className="border p-4 mr-4">Total Volume</div>
+                <div className="border p-4 mr-4">
+                  {allUserData.totalTickets} Tickets Total
+                </div>
+                <div className="border p-4 mr-4">
+                  TVL {allUserData.totalLiq} ETH
+                </div>
               </div>
             </div>
             <div className="col-span-3 flex justify-end absolute right-0 -top-16">
@@ -401,7 +420,7 @@ export default function DefenDaoDetail() {
                                               dark:bg-gray-300  dark:text-black"
                       value={inputTargetPrice}
                       placeholder="Enter your target price."
-                      decimalScale={3}
+                      decimalScale={4}
                       thousandSeparator=","
                       displayType="input"
                       suffix="ETH"
@@ -411,7 +430,7 @@ export default function DefenDaoDetail() {
                         className="plusBtn"
                         type="button"
                         onClick={() =>
-                          setInputTargetPrice(inputTargetPrice * 1.05)
+                          setInputTargetPrice(inputTargetPrice + priceUnit)
                         }
                       >
                         <svg
@@ -433,7 +452,7 @@ export default function DefenDaoDetail() {
                         className="plusBtn"
                         type="button"
                         onClick={() =>
-                          setInputTargetPrice(inputTargetPrice * 0.95)
+                          setInputTargetPrice(inputTargetPrice - priceUnit)
                         }
                       >
                         <svg
@@ -656,6 +675,7 @@ export default function DefenDaoDetail() {
             setInputTicketCount={setInputTicketCount}
             bidModal={bidModal}
             setBidModal={setBidModal}
+            sendtoBlock={sendtoBlock}
           />
         )}
         {/* claim Modal  */}
