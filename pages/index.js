@@ -40,7 +40,7 @@ export default function Home() {
     "http://127.0.0.1:8545/"
   );
   const defenDaoFactory = new ethers.Contract(
-    "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
+    "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
     DefenDAOFactory,
     provider
   );

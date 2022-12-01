@@ -43,7 +43,7 @@ export default function DefenDaoDetail() {
   );
   const defenDAOAddress = router.query.address;
   const defenDaoFactory = new ethers.Contract(
-    "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
+    "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
     DefenDAOFactory,
     provider
   );
@@ -99,12 +99,11 @@ export default function DefenDaoDetail() {
   //NFT Fetch//
   async function generateNft() {
     const itemArray = [];
-    const osArray = [];
     // id image name
     setLoading(true);
 
     const recentSolds = await defenDaoFactory.getRecentSolds();
-
+    console.log({ recent: recentSolds });
     for (const [index, sold] of recentSolds.entries()) {
       const options = {
         method: "GET",
@@ -116,24 +115,93 @@ export default function DefenDaoDetail() {
       const nftAddr = sold[0];
       const nftId = Number(sold[1]);
       const price = ethers.utils.formatEther(sold[2]);
-      const claimer = sold[3];
+      const buyer = sold[3];
+      const contAddr = sold[4];
+      const nftName = sold[5];
+      const imgUrl = sold[6];
 
-      const res = await fetch(
-        `https://api.opensea.io/api/v1/asset/${nftAddr}/${nftId}`,
-        options
-      );
-      const result = await res.json();
-      itemArray.push({
-        id: nftId,
-        img: result.image_url,
-        name: result.name,
-        price: price,
-        collection: result.collection,
-      });
+      //   const res = await fetch(
+      //     `https://api.opensea.io/api/v1/asset/${nftAddr}/${nftId}`,
+      //     options
+      //   );
+      //   const result = await res.json();
+      if (contAddr === router.query.address) {
+        itemArray.push({
+          id: nftId,
+          //img: result.image_url,
+          //name: result.name,
+          img: imgUrl,
+          name: nftName,
+          price: price,
+          address: contAddr,
+          claimer: buyer,
+        });
+      }
     }
 
     setNftpuller(itemArray);
+    console.log(itemArray);
     setLoading(false);
+  }
+
+  async function fetchOnChainData() {
+    const aud = {
+      labels: [],
+      datasets: [
+        {
+          label: "All user tickets",
+          data: [],
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+        },
+      ],
+      totalTickets: 0,
+      totalLiq: BigNumber.from(0),
+    };
+    const mud = {
+      labels: [],
+      datasets: [
+        {
+          label: "My tickets",
+          data: [],
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+        },
+      ],
+      totalTickets: 0,
+      totalLiq: BigNumber.from(0),
+    };
+    const defenDAO = new ethers.Contract(defenDAOAddress, DefenDAO, provider);
+
+    const unit = ethers.utils.formatEther(await defenDAO.offerPriceUnit());
+    const floorPrice = ethers.utils.formatEther(await defenDAO.curFloorPrice());
+    const len = Math.floor(floorPrice / unit);
+
+    let liq = BigNumber.from(0);
+    for (let i = 1; i <= len; i++) {
+      const ticket = Number(
+        await defenDAO.getAllOffers(ethers.utils.parseEther(unit).mul(i))
+      );
+      aud.labels.push(`${roundDown(unit * i, 3)} ETH`);
+      aud.datasets[0].data.push(ticket);
+      aud.totalTickets += ticket;
+      liq = liq.add(ethers.utils.parseEther(unit).mul(i).mul(ticket));
+
+      if (isConnected) {
+        const myTickets = Number(
+          await defenDAO.getUserOffers(
+            address,
+            ethers.utils.parseEther(unit).mul(i)
+          )
+        );
+        mud.labels.push(`${roundDown(unit * i, 3)} ETH`);
+        mud.datasets[0].data.push(myTickets);
+        mud.totalTickets += ticket;
+      }
+    }
+    aud.totalLiq = ethers.utils.formatEther(liq);
+
+    setAllUserData(aud);
+    console.log(mud);
+    setMyData(mud);
   }
 
   useEffect(() => {
@@ -142,6 +210,7 @@ export default function DefenDaoDetail() {
       console.log("CanvasRenderingContext2D", chart.ctx);
       console.log("HTMLCanvasElement", chart.canvas);
     }
+    fetchOnChainData();
     generateNft();
   }, []);
 
