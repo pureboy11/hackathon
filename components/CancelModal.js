@@ -53,6 +53,22 @@ export default function CancelModal(props) {
                             />{" "}
                         </div>
                     </div>
+                    <div className="flex items-center justify-end mt-10">
+                        <div className="mr-5">Total </div>
+                        <div className="">
+                            <div className="text-xl">
+                                <NumericFormat
+                                    className=""
+                                    value={props.inputTargetPrice * props.inputTicketCount}
+                                    prefix={""}
+                                    decimalScale={3}
+                                    thousandSeparator=","
+                                    displayType="text"
+                                />{" "}
+                                ETH
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className="flex justify-end mt-5 mr-6">
                     {!props.loading ? (
@@ -65,11 +81,11 @@ export default function CancelModal(props) {
                             </button>
                         </>
                     ) : (
-                        <>
-                            <button className="dark:bg-slate-600 bg-slate-500 w-32 h-16 px-2 text-sm rounded-2xl dark:border-slate-900 border border-slate-300 shadow-lg flex justify-center items-center">
+                        <div className="fixed inset-0 bg-black opacity-70 text-xl">
+                            <div className="absolute top-1/2 left-1/2 flex flex-col items-center">
                                 <svg
                                     aria-hidden="true"
-                                    className=" w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                                    className=" w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600  mr-2 mb-5"
                                     viewBox="0 0 100 101"
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -84,8 +100,9 @@ export default function CancelModal(props) {
                                     />
                                 </svg>
                                 <span>Loading...</span>
-                            </button>
-                        </>
+                                <div className="mt-5 text-center">blahkdsafqrr...</div>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
