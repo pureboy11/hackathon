@@ -5,14 +5,14 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Header() {
   useEffect(() => {
-    console.log(window.ethereum);
-    // if (typeof window.ethereum !== "undefined") {
-    try {
-      const web = new ethers(window.ethereum);
-      setEthers(web);
-    } catch (err) {
-      console.log(err);
-    }
+    // console.log(window.ethereum);
+    // // if (typeof window.ethereum !== "undefined") {
+    // try {
+    //   const web = new ethers(window.ethereum);
+    //   setEthers(web);
+    // } catch (err) {
+    //   console.log(err);
+    // }
   }, []);
 
   // useEffect(() => {

@@ -5,8 +5,10 @@ import Chart from "../../components/common/chart";
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import DefenDAO from "../../components/data/TestDefenDAO.json";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
 // project name -> 가져올수있음
 // floor price -> 가져올수있음
@@ -16,10 +18,17 @@ import DefenDAO from "../../components/data/TestDefenDAO.json";
 // getAllOffers(price) price단위는 0.5, 1.0, 1.5 인듯
 
 export default function DefenDaoDetail() {
+  const { address, isConnected } = useAccount();
+  // const account = useAccount({
+  //   onConnect({ address, connector, isReconnected }) {
+  //     console.log("Connected", { address, connector, isReconnected });
+  //   },
+  // });
+
   const router = useRouter();
   console.log(router);
   const chartRef = useRef(null);
-  const [navigate, setNavigate] = useState("1");
+  const [navigate, setNavigate] = useState(1);
   const [allUserData, setAllUserData] = useState({
     labels: [],
     datasets: [
@@ -29,6 +38,8 @@ export default function DefenDaoDetail() {
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
+    totalTickets: 0,
+    totalLiq: "",
   });
   const [myData, setMyData] = useState({
     labels: [],
@@ -39,6 +50,8 @@ export default function DefenDaoDetail() {
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
+    totalTickets: 0,
+    totalLiq: "",
   });
   const data = router.query.data;
   const defenDAOAddress = router.query.address;
@@ -62,6 +75,20 @@ export default function DefenDaoDetail() {
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
       ],
+      totalTickets: 0,
+      totalLiq: BigNumber.from(0),
+    };
+    const mud = {
+      labels: [],
+      datasets: [
+        {
+          label: "My tickets",
+          data: [],
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+        },
+      ],
+      totalTickets: 0,
+      totalLiq: BigNumber.from(0),
     };
     const defenDAO = new ethers.Contract(defenDAOAddress, DefenDAO, provider);
 
@@ -69,15 +96,33 @@ export default function DefenDaoDetail() {
     const floorPrice = ethers.utils.formatEther(await defenDAO.curFloorPrice());
     const len = Math.floor(floorPrice / unit);
 
-    for (let i = 1; i < len; i++) {
+    let liq = BigNumber.from(0);
+    for (let i = 1; i <= len; i++) {
       const ticket = Number(
         await defenDAO.getAllOffers(ethers.utils.parseEther(unit).mul(i))
       );
-      aud.labels.push(`${roundDown(unit * i, 1)} ETH`);
+      aud.labels.push(`${roundDown(unit * i, 3)} ETH`);
       aud.datasets[0].data.push(ticket);
+      aud.totalTickets += ticket;
+      liq = liq.add(ethers.utils.parseEther(unit).mul(i).mul(ticket));
+
+      if (isConnected) {
+        const myTickets = Number(
+          await defenDAO.getUserOffers(
+            address,
+            ethers.utils.parseEther(unit).mul(i)
+          )
+        );
+        mud.labels.push(`${roundDown(unit * i, 3)} ETH`);
+        mud.datasets[0].data.push(myTickets);
+        mud.totalTickets += ticket;
+      }
     }
+    aud.totalLiq = ethers.utils.formatEther(liq);
 
     setAllUserData(aud);
+    console.log(mud);
+    setMyData(mud);
   }
 
   useEffect(() => {
@@ -126,8 +171,8 @@ export default function DefenDaoDetail() {
               </div>
             </div>
             <div className="">
-              <div>Members 숫자</div>
-              <div>Ticket 숫자</div>
+              <div>Total Liquidity {allUserData.totalLiq} ETH</div>
+              <div>{allUserData.totalTickets} Tickets total</div>
             </div>
           </div>
         </section>
@@ -175,7 +220,11 @@ export default function DefenDaoDetail() {
         </section>
         <section className="lg:grid lg:grid-cols-6">
           <div className="col-span-4 m-4 h-[300px] lg:h-[600px]">
-            <Chart data={allUserData} className="" />
+            {navigate === 2 ? (
+              <Chart data={myData} className="" />
+            ) : (
+              <Chart data={allUserData} className="" />
+            )}
           </div>
           <div className="col-span-2 border border-slate-200 m-4 lg:h-[600px] grid grid-row-6 rounded-lg">
             <div className="row-span-3 border-white border">Bidding area</div>
