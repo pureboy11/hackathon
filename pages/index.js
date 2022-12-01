@@ -11,18 +11,6 @@ import DefenDAOFactory from "../components/data/TestDefenDAOFactory.json";
 import DefenDAO from "../components/data/TestDefenDAO.json";
 import { NumericFormat } from "react-number-format";
 
-// index : DefenDAO + openSea 정보 가져오기
-// [pid].js : DefenDAO 프로젝트 개별 NFT + 그래프 정보 (+FloorPrice?) 정보 가져오기 // 오픈씨 데이터는 최소화
-// Index에서 다 가져오는 것보다 Meta데이터 같은 것만 Router.push하고, 나머지 중요한 데이터는 개별 컬렉션 페이지에서 받는게 좋지 않을지..
-
-//pid 팝업, 디자인 작업 위주로 진행 예정
-//코드 정리 좀 하긴 해야함..
-//BAYC 짭퉁 프로젝트라 최근 거래된 NFT가 없음.
-
-//<할 일>
-// index.js : map key 겹치는거 해결 해야 함. 데이터 가져오는거 좀 더 깔끔하게 정리. nft 클릭시 Floor Price 정보만 더 추가하기
-// pid.js : confirm, claim 팝업 내용 정리. my bid, History 등 데이터 받아서 정보 보여주기?
-
 export default function Home() {
   const router = useRouter();
   const [defendaoData, setdefendaData] = useState([]);
@@ -171,7 +159,6 @@ export default function Home() {
 
   // console.log({ defenDAO: defendaoData });
   // console.log({ nft: nftData });
-  // console.log({ nftpuller });
 
   const onChange = (event) => {
     setSearchbar(event.target.value);
@@ -216,7 +203,6 @@ export default function Home() {
                     <button className="rounded-full bg-indigo-500 w-2 h-2 hover:scale-110 transition duration-300 transform"></button>
                   </>
                 ) : null}
-                {/* <div className="bg-slate-600 w-40 h-40 absolute left-1/2 rotate-45"></div> */}
               </div>
               {guideBook === 1 ? (
                 <section className="section1">
@@ -287,7 +273,7 @@ export default function Home() {
               </>
             ) : (
               <>
-                {nftData.map((nfts, i) => (
+                {nftData.map((nfts) => (
                   <>
                     {selectedCollection === nfts.id ? (
                       <>
@@ -674,6 +660,9 @@ export default function Home() {
                           name: daoList.opensea.collection.name,
                           floorPrice: daoList.stats.stats.floor_price,
                           img: daoList.opensea.collection.image_url,
+                          marketCap : daoList.stats.stats.market_cap,
+                          avgPrice: daoList.stats.stats.average_price,
+
                         },
                       }}
                       // as={`/dao/${daoList.opensea.collection.name}`}

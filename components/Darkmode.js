@@ -18,6 +18,7 @@ export default function Darkmode() {
                             dark:text-slate-400
                             dark:hover:bg-slate-700
                             dark:hover:text-yellow-500
+                            ml-5
                             "
         type="button"
         onClick={() =>

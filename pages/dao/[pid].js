@@ -9,6 +9,7 @@ import { BigNumber, ethers } from "ethers";
 import DefenDAO from "../../components/data/TestDefenDAO.json";
 import { useAccount, useSigner, useContract } from "wagmi";
 import { NumericFormat } from "react-number-format";
+import { useTimeoutFn } from "react-use";
 import ConfirmModal from "../../components/ConfirmModal";
 import CancelModal from "../../components/CancelModal";
 import ClaimModal from "../../components/ClaimModal";
@@ -39,6 +40,7 @@ export default function DefenDaoDetail() {
     const [walletAsset, setwalletAsset] = useState("20.14124");
     const [inputTargetPrice, setInputTargetPrice] = useState(1);
     const [inputTicketCount, setInputTicketCount] = useState(10);
+    const [, , setAutoChangeTime] = useTimeoutFn(() => setInfoModal(false), 5000);
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/");
     const defenDAOAddress = router.query.address;
     const defenDaoFactory = new ethers.Contract(
@@ -98,6 +100,10 @@ export default function DefenDaoDetail() {
 
     const onChangeTicket = (event) => {
         setInputTicketCount(event.target.value);
+    };
+
+    const initInfoModal = () => {
+        setAutoChangeTime();
     };
 
     function roundDown(number, decimals) {
@@ -222,6 +228,10 @@ export default function DefenDaoDetail() {
         generateNft();
     }, []);
 
+    useEffect(() => {
+        initInfoModal();
+    }, [infoModal]);
+
     return (
         <>
             <TitleManager pageTitle="CollectionNAME" />
@@ -230,7 +240,7 @@ export default function DefenDaoDetail() {
 
             {/* 위에서 내려오는 InfoModal */}
             {infoModal ? (
-                <section className="fixed -top-2 left-1/3 w-[800px] h-12 mx-auto bg-green-900 rounded-lg z-20 pt-4 flex items-center justify-center duration-500 transition-all ">
+                <section className="fixed -top-2 left-1/3 w-[800px] h-12 mx-auto bg-green-700 dark:bg-green-900 text-slate-200 rounded-lg z-20 pt-4 flex items-center justify-center duration-500 transition-all animate-pulse ">
                     Defend the NFT price with 10 tickets! ( 10 Tickets = 1 NFT)
                     <button
                         className="absolute right-3 top-3 hover:-rotate-90 duration-300"
@@ -250,12 +260,12 @@ export default function DefenDaoDetail() {
                 </section>
             ) : null}
             {/* 제목 및 기본 정보 */}
-            <div className="relative mx-3 lg:mx-20 h-screen mt-10">
-                <section className="INFO h-36 mb-10">
+            <div className="relative mx-3 lg:mx-20 mt-10">
+                <section className="INFO mb-10">
                     <div className="grid grid-cols-6 ">
                         <div className="col-span-3">
                             <div className="flex items-center justify-start m-2">
-                                <div className="rounded-full w-20 h-20 mr-4">
+                                <div className="rounded-full w-28 h-28 mr-4 mb-4">
                                     {router.query.img !== null ? (
                                         <>
                                             <Image
@@ -274,18 +284,34 @@ export default function DefenDaoDetail() {
                                     <div className="text-4xl mb-auto font-semibold dark:text-slate-50 font-pop">
                                         {router.query.name}
                                     </div>
-                                    <div className="text-2xl font-semibold text-slate-400 mt-2 font-pop">
+                                    <div className="text-2xl font-semibold text-slate-400 dark:text-slate-400 ml-4 mt-2 font-pop">
                                         Floor Price : {router.query.floorPrice || "Loading"} ETH
+                                    </div>
+                                    <div className="text-md font-semibold text-slate-400 dark:text-slate-400 ml-4 font-pop">
+                                        Avg :
+                                        <NumericFormat
+                                            className=""
+                                            value={router.query.avgPrice || "Loading"}
+                                            prefix={""}
+                                            decimalScale={4}
+                                            thousandSeparator=","
+                                            displayType="text"
+                                            suffix="ETH"
+                                        />
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex ">
-                                <div className="border p-4 mr-4">{allUserData.totalTickets} Tickets Total</div>
-                                <div className="border p-4 mr-4">TVL {allUserData.totalLiq} ETH</div>
+                            <div className="flex">
+                                <div className="border p-4 mr-4 mt-2">{allUserData.totalTickets} Tickets Total</div>
+                                <div className="border p-4 mr-4 mt-2">TVL {allUserData.totalLiq} ETH</div>
                             </div>
                         </div>
-                        <div className="col-span-3 flex justify-end absolute right-0 -top-16">
-                            <div className="bg-slate-100 dark:bg-slate-900/40 rounded-xl py-4 grid grid-flow-col">
+                        <div className="col-span-3 flex justify-center absolute right-6 -top-16">
+                            <div className="absolute -top-3 bg-green-400 dark:bg-green-800 p-2 rounded-lg w-60 z-20 text-center">
+                                {" "}
+                                Latest DAO's Activity{" "}
+                            </div>
+                            <div className="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-1 pt-10 gap-5 overflow-x-auto grid grid-flow-col items-center scroll-smooth w-[700px] h-68">
                                 {loading ? (
                                     <>
                                         <div className="flex justify-center items-center py-10 p-2 animate-pulse font-def">
@@ -310,40 +336,42 @@ export default function DefenDaoDetail() {
                                     </>
                                 ) : (
                                     nftpuller.map((nftList) => (
-                                        <div key={nftList.id}>
-                                            <div className="NFTCARDS relative overflow-hidden bg-inherit rounded-xl shadow-md transition-all mx-5 w-40">
-                                                <div className="flex flex-col asepct-square overflow-hidden items-center w-40 relative h-40">
-                                                    {nftList.img !== null ? (
-                                                        <Image
-                                                            src={nftList.img}
-                                                            alt="NFT Img"
-                                                            className="object-cover absolute left-0 top-0 hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
-                                                            width={160}
-                                                            height={160}
-                                                            priority="true"
-                                                            unoptimized="true"
-                                                        />
-                                                    ) : null}
-                                                </div>
-                                                <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
-                                                    <span className="bg-slate-400 text-md dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
-                                                        ETH
-                                                    </span>
-                                                </div>
-                                                <div className="TEXTBOX px-2 py-1 bg-slate-100 dark:bg-slate-700 text-sm">
-                                                    <div className="flex text-xs items-center">
-                                                        <span className="block text-lg font-semibold truncate ... whitespace-pre">
-                                                            {nftList.name}
+                                        <>
+                                            <div key={nftList.id}>
+                                                <div className="NFTCARDS relative overflow-hidden bg-inherit rounded-xl shadow-md transition-all mx-5 w-40">
+                                                    <div className="flex flex-col asepct-square overflow-hidden items-center relative h-32">
+                                                        {nftList.img !== null ? (
+                                                            <Image
+                                                                src={nftList.img}
+                                                                alt="NFT Img"
+                                                                className="object-cover absolute left-0 top-0 hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
+                                                                width={160}
+                                                                height={160}
+                                                                priority="true"
+                                                                unoptimized="true"
+                                                            />
+                                                        ) : null}
+                                                    </div>
+                                                    <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
+                                                        <span className="bg-slate-300 text-sm dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
+                                                            ETH
                                                         </span>
                                                     </div>
-                                                    <div className="flex text-lg items-center pb-4">
-                                                        <span className="block text-sm font-medium truncate ... whitespace-pre">
-                                                            {nftList.price} ETH
-                                                        </span>
+                                                    <div className="TEXTBOX px-2 pt-2 bg-slate-100 dark:bg-slate-700 text-sm">
+                                                        <div className="flex items-center pb-2">
+                                                            <span className="block text-md font-semibold truncate ... whitespace-pre">
+                                                                {nftList.name}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex text-lg items-center pb-4">
+                                                            <span className="block text-sm font-medium truncate ... whitespace-pre">
+                                                                {nftList.price} ETH
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </>
                                     ))
                                 )}
                             </div>
@@ -351,28 +379,26 @@ export default function DefenDaoDetail() {
                     </div>
                 </section>
                 {/* Navigation */}
-                <section className="gap-5">
-                    <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
-                        <li className="mr-2">
-                            <button
-                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg 
-                                } `}
-                                onClick={() => setNavigate(1)}
-                            >
-                                Pool Value
-                            </button>
-                        </li>
-                        <li className="mr-2">
-                            <button
-                                className={`inline-block p-4 rounded-t-lg focus:dark:bg-gray-800 text-lg 
-                                } `}
-                                onClick={() => setNavigate(2)}
-                            >
-                                My Bids
-                            </button>
-                        </li>
-                    </ul>
-                </section>
+                <div className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                    <div className="space-x-5">
+                        <button
+                            className={`inline-block p-4 rounded-t-lg  text-lg ${
+                                navigate === 1 ? "dark:bg-gray-700 bg-gray-200" : null
+                            } `}
+                            onClick={() => setNavigate(1)}
+                        >
+                            Pool Value
+                        </button>
+                        <button
+                            className={`inline-block p-4 rounded-t-lg text-lg ${
+                                navigate === 2 ? "dark:bg-gray-700 bg-gray-200" : null
+                            } `}
+                            onClick={() => setNavigate(2)}
+                        >
+                            My Bids
+                        </button>
+                    </div>
+                </div>
                 {/* Controller */}
                 <section className="lg:grid lg:grid-cols-4">
                     <div className="col-span-3 m-4 h-[300px] lg:h-[650px]">
@@ -383,6 +409,7 @@ export default function DefenDaoDetail() {
                         )}
                     </div>
                     <div className="col-span-1 m-4 lg:h-[650px] rounded-lg grid grid-row-8">
+                        <div className="px-4 title-text mt-5">Bidding Area</div>
                         <div className="row-span-6 p-2">
                             <div className="controller-minibox h-84">
                                 <div className="flex justify-between">
@@ -541,7 +568,7 @@ export default function DefenDaoDetail() {
                         </div>
                         <div className="px-4 title-text mt-5">Claimable NFT</div>
                         <div className="row-span-1 mb-5 px-2">
-                            <div className="controller-minibox overflow-y-auto p-5 space-y-4 h-60">
+                            <div className="controller-minibox overflow-y-auto p-5 space-y-4 h-40">
                                 {loading ? (
                                     <>
                                         <div className="flex justify-center items-center py-10 p-2 animate-pulse font-def">
@@ -591,7 +618,7 @@ export default function DefenDaoDetail() {
                                                         </span>
                                                     </div>
                                                     <div className="flex text-lg justify-end items-center mt-5 mb-2 mr-4">
-                                                        <span className="block text-lg font-medium truncate ... whitespace-pre bg-slate-800 p-2 rounded-lg">
+                                                        <span className="block text-lg text-white font-medium truncate ... whitespace-pre bg-slate-800 p-2 rounded-lg">
                                                             {nftList.price} ETH
                                                         </span>
                                                     </div>
