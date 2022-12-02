@@ -31,6 +31,7 @@ export default function DefenDaoDetail() {
   const [priceUnit, setPriceUnit] = useState(1);
   const [initPrice, setInitPrice] = useState(1);
   const [nftpuller, setNftpuller] = useState([]);
+  const [myNFTList, setMyNFTList] = useState([]);
   const [claimableNFTs, setClaimableNFTs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [navigate, setNavigate] = useState(1);
@@ -61,7 +62,7 @@ export default function DefenDaoDetail() {
     labels: [],
     datasets: [
       {
-        label: "All user TVL",
+        label: "All user tickets",
         data: [],
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
@@ -73,7 +74,7 @@ export default function DefenDaoDetail() {
     labels: [],
     datasets: [
       {
-        label: "My TVL",
+        label: "My tickets",
         data: [],
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
@@ -156,8 +157,7 @@ export default function DefenDaoDetail() {
       const claimable = await defenDAO.getClaimableNFTs(address);
 
       for (const [, nftId] of claimable.entries()) {
-        if (nftId == 0)
-          continue;
+        if (nftId == 0) continue;
 
         claimableList.push({
           id: Number(nftId),
@@ -167,6 +167,32 @@ export default function DefenDaoDetail() {
       }
     }
     setClaimableNFTs(claimableList);
+  }
+
+  async function getMyNFTList() {
+    const myList = [];
+
+    if (isConnected) {
+      const NFTContract = new ethers.Contract(
+        router.query.nftAddress,
+        NFTCollection,
+        provider
+      );
+      //console.log("Claimable", await defenDAO.getClaimableNFTs(address));
+      const balance = await NFTContract.balanceOf(address);
+      console.log("Balance", balance);
+
+      for (let i = 0; i < balance; i++) {
+        const nftId = await NFTContract.tokenOfOwnerByIndex(address, i);
+
+        myList.push({
+          id: Number(nftId),
+          img: tempImages[Number(nftId)],
+          name: router.query.name + "#" + Number(nftId),
+        });
+      }
+    }
+    setMyNFTList(myList);
   }
 
   //NFT Fetch//
@@ -222,7 +248,7 @@ export default function DefenDaoDetail() {
       labels: [],
       datasets: [
         {
-          label: "All user TVL",
+          label: "All user tickets",
           data: [],
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
@@ -234,7 +260,7 @@ export default function DefenDaoDetail() {
       labels: [],
       datasets: [
         {
-          label: "My TVL",
+          label: "My tickets",
           data: [],
           backgroundColor: "rgba(55, 99, 132, 0.9)",
         },
@@ -244,10 +270,10 @@ export default function DefenDaoDetail() {
     };
 
     const unit = ethers.utils.formatEther(await defenDAO.offerPriceUnit());
-    setPriceUnit(Number(unit));
-    setInitPrice(Number(unit));
-    setInputTargetPrice(Number(unit));
     const floorPrice = ethers.utils.formatEther(await defenDAO.curFloorPrice());
+    setPriceUnit(Number(unit));
+    setInitPrice(Number(floorPrice));
+    setInputTargetPrice(Number(floorPrice));
     const len = Math.floor(floorPrice / unit);
 
     let liq = BigNumber.from(0);
@@ -256,9 +282,9 @@ export default function DefenDaoDetail() {
         await defenDAO.getAllOffers(ethers.utils.parseEther(unit).mul(i))
       );
       aud.labels.push(`${roundDown(unit * i, 5)} ETH`);
-      aud.datasets[0].data.push(roundDown(unit * ticket, 5));
+      aud.datasets[0].data.push(ticket);
       aud.totalTickets += ticket;
-      liq = liq.add(ethers.utils.parseEther(unit).mul(ticket));
+      liq = liq.add(ethers.utils.parseEther(unit).mul(i).mul(ticket).div(10));
 
       if (isConnected) {
         const myTickets = Number(
@@ -268,8 +294,8 @@ export default function DefenDaoDetail() {
           )
         );
         mud.labels.push(`${roundDown(unit * i, 5)} ETH`);
-        mud.datasets[0].data.push(roundDown(unit * myTickets, 5));
-        mud.totalTickets += ticket;
+        mud.datasets[0].data.push(myTickets);
+        mud.totalTickets += myTickets;
       }
     }
     aud.totalLiq = ethers.utils.formatEther(liq);
@@ -288,6 +314,7 @@ export default function DefenDaoDetail() {
     fetchOnChainData();
     generateNft();
     getClaimable();
+    getMyNFTList();
   }, []);
 
   useEffect(() => {
@@ -303,8 +330,7 @@ export default function DefenDaoDetail() {
       {/* 위에서 내려오는 InfoModal */}
       {infoModal ? (
         <section className="fixed -top-2 left-1/3 w-[800px] h-12 mx-auto bg-green-700 dark:bg-green-900 text-slate-200 rounded-lg z-20 pt-4 flex items-center justify-center duration-500 transition-all animate-pulse ">
-          Defend the NFT price with separable tickets! ( 1 Tickets = 1 Unit
-          Price )
+          Defend the NFT price with separable tickets! ( 10 Tickets = 1 NFT )
           <button
             className="absolute right-3 top-3 hover:-rotate-90 duration-300"
             onClick={() => setInfoModal(false)}
@@ -407,40 +433,40 @@ export default function DefenDaoDetail() {
                   </>
                 ) : (
                   nftpuller.map((nftList) => (
-                      <div key={nftList.id}>
-                        <div className="NFTCARDS relative overflow-hidden bg-inherit rounded-xl shadow-md transition-all mx-5 w-40">
-                          <div className="flex flex-col asepct-square overflow-hidden items-center relative h-40">
-                            {nftList.img !== null ? (
-                              <Image
-                                src={nftList.img}
-                                alt="NFT Img"
-                                className="object-cover absolute left-0 top-0 hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
-                                width={160}
-                                height={160}
-                                priority="true"
-                                unoptimized="true"
-                              />
-                            ) : null}
-                          </div>
-                          <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
-                            <span className="bg-slate-300 text-sm dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
-                              ETH
+                    <div key={nftList.id}>
+                      <div className="NFTCARDS relative overflow-hidden bg-inherit rounded-xl shadow-md transition-all mx-5 w-40">
+                        <div className="flex flex-col asepct-square overflow-hidden items-center relative h-40">
+                          {nftList.img !== null ? (
+                            <Image
+                              src={nftList.img}
+                              alt="NFT Img"
+                              className="object-cover absolute left-0 top-0 hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
+                              width={160}
+                              height={160}
+                              priority="true"
+                              unoptimized="true"
+                            />
+                          ) : null}
+                        </div>
+                        <div className="ICON -mt-3 flex justify-end bg-slate-100 dark:bg-slate-700">
+                          <span className="bg-slate-300 text-sm dark:bg-slate-600 rounded-2xl px-2 z-10 mr-3 shadow-xl border border-slate-100">
+                            ETH
+                          </span>
+                        </div>
+                        <div className="TEXTBOX px-2 pt-2 bg-slate-100 dark:bg-slate-700 text-sm">
+                          <div className="flex items-center pb-2">
+                            <span className="block text-md font-semibold truncate ... whitespace-pre">
+                              {nftList.name}
                             </span>
                           </div>
-                          <div className="TEXTBOX px-2 pt-2 bg-slate-100 dark:bg-slate-700 text-sm">
-                            <div className="flex items-center pb-2">
-                              <span className="block text-md font-semibold truncate ... whitespace-pre">
-                                {nftList.name}
-                              </span>
-                            </div>
-                            <div className="flex text-lg items-center pb-4">
-                              <span className="block text-sm font-medium truncate ... whitespace-pre">
-                                {nftList.price} ETH
-                              </span>
-                            </div>
+                          <div className="flex text-lg items-center pb-4">
+                            <span className="block text-sm font-medium truncate ... whitespace-pre">
+                              {nftList.price} ETH
+                            </span>
                           </div>
                         </div>
                       </div>
+                    </div>
                   ))
                 )}
               </div>
@@ -498,7 +524,7 @@ export default function DefenDaoDetail() {
                         thousandSeparator=","
                         displayType="input"
                         type="number"
-                        step={priceUnit /10 }
+                        step={priceUnit}
                       />
                       <div className="absolute right-2 top-1/4 flex items-center mr-2 text-slate-600">
                         <span>ETH</span>
@@ -518,7 +544,7 @@ export default function DefenDaoDetail() {
                                            dark:bg-gray-300 dark:text-black w-60"
                         value={inputTicketCount}
                         onChange={onChangeTicket}
-                        placeholder="1UnitPrice = 1"
+                        placeholder="10 Tickets = 1 NFT"
                         decimalScale={0}
                         thousandSeparator=","
                         displayType="input"
@@ -674,36 +700,36 @@ export default function DefenDaoDetail() {
                   </>
                 ) : (
                   claimableNFTs.map((nftList) => (
-                      <div
-                        className="NFTCARDS relative overflow-hidden rounded-xl shadow-md h-32 grid grid-cols-7 bg-slate-100 dark:bg-slate-700"
-                        key={nftList.id}
-                      >
-                        <div className="col-span-2 asepct-square overflow-hidden">
-                          {nftList.img !== null ? (
-                            <Image
-                              src={nftList.img}
-                              alt="NFT Img"
-                              className="absolute top-0 bottom-5 object-cover rounded-t-xl"
-                              width={128}
-                              height={128}
-                              priority="true"
-                              unoptimized="true"
-                            />
-                          ) : null}
+                    <div
+                      className="NFTCARDS relative overflow-hidden rounded-xl shadow-md h-32 grid grid-cols-7 bg-slate-100 dark:bg-slate-700"
+                      key={nftList.id}
+                    >
+                      <div className="col-span-2 asepct-square overflow-hidden">
+                        {nftList.img !== null ? (
+                          <Image
+                            src={nftList.img}
+                            alt="NFT Img"
+                            className="absolute top-0 bottom-5 object-cover rounded-t-xl"
+                            width={128}
+                            height={128}
+                            priority="true"
+                            unoptimized="true"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="col-span-5 pt-5">
+                        <div className="">
+                          <span className="font-def text-lg font-semibold truncate ... whitespace-pre">
+                            {nftList.name}
+                          </span>
                         </div>
-                        <div className="col-span-5 pt-5">
-                          <div className="">
-                            <span className="font-def text-lg font-semibold truncate ... whitespace-pre">
-                              {nftList.name}
-                            </span>
-                          </div>
-                          {/* <div className="flex text-lg justify-end items-center mt-5 mb-2 mr-4">
+                        {/* <div className="flex text-lg justify-end items-center mt-5 mb-2 mr-4">
                             <span className="block text-lg text-white font-medium truncate ... whitespace-pre bg-slate-800 p-2 rounded-lg">
                               {nftList.price} ETH
                             </span>
                           </div> */}
-                        </div>
                       </div>
+                    </div>
                   ))
                 )}
               </div>
@@ -718,6 +744,62 @@ export default function DefenDaoDetail() {
             </div>
           </div>
         </section>
+        {/* <section class="lg:grid lg:grid-rows-2">
+          <div className="row-span-2 flex justify-center right-6 -top-16">
+            <div className="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-1 pt-10 gap-5 overflow-x-auto justify-start grid grid-flow-col items-center scroll-smooth w-[700px] h-68">
+              {loading ? (
+                <>
+                  <div className="flex justify-center items-center py-10 p-2 animate-pulse font-def">
+                    <svg
+                      aria-hidden="true"
+                      className=" w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                      viewBox="0 0 100 101"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                        fill="currentColor"
+                      />
+                      <path
+                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                        fill="currentFill"
+                      />
+                    </svg>
+                    <span>Loading...</span>
+                  </div>
+                </>
+              ) : (
+                myNFTList.map((nftList) => (
+                  <div key={nftList.id}>
+                    <div className="NFTCARDS relative overflow-hidden bg-inherit rounded-xl shadow-md transition-all mx-5 w-40">
+                      <div className="flex flex-col asepct-square overflow-hidden items-center relative h-40">
+                        {nftList.img !== null ? (
+                          <Image
+                            src={nftList.img}
+                            alt="NFT Img"
+                            className="object-cover absolute left-0 top-0 hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
+                            width={160}
+                            height={160}
+                            priority="true"
+                            unoptimized="true"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="TEXTBOX px-2 pt-2 bg-slate-100 dark:bg-slate-700 text-sm">
+                        <div className="flex items-center pb-2">
+                          <span className="block text-md font-semibold truncate ... whitespace-pre">
+                            {nftList.name}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section> */}
         {/* Bid Modal  */}
         {!bidModal ? null : (
           <ConfirmModal
