@@ -19,7 +19,7 @@ export default function Home() {
   const [collectionFetching, setCollectionFetching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [guideBook, setGuideBook] = useState(1);
-  const [selectedCollection, setSelectedCollection] = useState(3);
+  const [selectedCollection, setSelectedCollection] = useState(0);
   const [, , setAutoChangeTime] = useTimeoutFn(
     () => setGuideBook((guideBook + 1) % 3),
     5000
@@ -263,35 +263,18 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-900/20 rounded-xl p-5 gap-10 overflow-x-auto grid grid-flow-col dark:shadow-slate-700 shadow-md scroll-smooth">
+          <div className="bg-slate-50 dark:bg-slate-900/20 rounded-xl p-5 gap-10 overflow-x-auto grid grid-flow-col justify-start dark:shadow-slate-700 shadow-md scroll-smooth">
             {loading ? (
-              <>
                 <div className="NFTCARDS hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52">
                   <div>Loading...</div>
                 </div>
-              </>
             ) : (
               <>
                 {nftData.map((nfts) => (
-                  <>
+                  <div key={nfts.id} className="flex gap-10">
                     {selectedCollection === nfts.id ? (
                       <>
-                        <div className="absolute left-10 -top-10 ">
-                          <button
-                            className={`green-Btn truncate ... ${
-                              selectedCollection === nfts.id
-                                ? "bg-green-40"
-                                : null
-                            }`}
-                            onClick={() => setSelectedCollection(nfts.id)}
-                            key={nfts.id}
-                          >
-                            {nfts.opensea.collection.name}
-                          </button>
-                        </div>
-
                         {nftData[nfts.id].events.map((nftList) => (
-                          <>
                             <Link
                               className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
                               key={nftList.id}
@@ -360,188 +343,13 @@ export default function Home() {
                                 Go to Dao
                               </div>
                             </Link>
-                          </>
                         ))}
                       </>
                     ) : null}
-                  </>
+                  </div>
                 ))}
               </>
             )}
-            <div>
-              {/* {selectedCollection === 0 ? (
-                            <>
-                                <span>"data not found"</span>
-                            </>
-                        ) : selectedCollection === 1 ? (
-                            <>
-                                {nftData[1].events.map((nftList) => (
-                                    <>
-                                        <div className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52 ">
-                                            <div className="flex flex-col asepct-square overflow-hidden  items-center">
-                                                {nftList.asset.image_url !== null ? (
-                                                    <Image
-                                                        src={nftList.asset.image_url}
-                                                        alt="NFT Img"
-                                                        className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
-                                                        width={250}
-                                                        height={250}
-                                                        priority="true"
-                                                        unoptimized="true"
-                                                    />
-                                                ) : null}
-                                            </div>
-                                            <div className="TEXTBOX px-2 py-1 space-y-2 bg-white dark:bg-slate-700 h-24">
-                                                <div className="ICON flex justify-start items-end mt-2">
-                                                    <span className="font-pop text-lg font-bold text-slate-700 dark:text-slate-300 truncate ... ">
-                                                        {nftList.asset.name}
-                                                    </span>
-                                                </div>
-                                                <div className="title-text-sm bg-slate-200 dark:bg-slate-800 text-right rounded-xl pr-4 p-1">
-                                                    <NumericFormat
-                                                        className=""
-                                                        value={nftList.total_price / 1000000000000000000}
-                                                        decimalScale={4}
-                                                        thousandSeparator=","
-                                                        displayType="text"
-                                                        suffix="ETH"
-                                                    />
-                                                </div>
-                                                <div className="absolute bottom-[74px] right-2">
-                                                    {nftList.asset.collection.image_url !== null ? (
-                                                        <Image
-                                                            src={nftList.asset.collection.image_url}
-                                                            alt="NFT Img"
-                                                            className="rounded-full border-4 border-white dark:border-slate-400"
-                                                            width={50}
-                                                            height={50}
-                                                            priority="true"
-                                                            unoptimized="true"
-                                                        />
-                                                    ) : null}
-                                                </div>
-                                            </div>
-                                            <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
-                                                Go to Dao
-                                            </div>
-                                        </div>
-                                    </>
-                                ))}
-                            </>
-                        ) : selectedCollection === 2 ? (
-                            <>
-                                <>
-                                    {nftData[2].events.map((nftList) => (
-                                        <>
-                                            <div className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52 ">
-                                                <div className="flex flex-col asepct-square overflow-hidden  items-center">
-                                                    {nftList.asset.image_url !== null ? (
-                                                        <Image
-                                                            src={nftList.asset.image_url}
-                                                            alt="NFT Img"
-                                                            className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
-                                                            width={250}
-                                                            height={250}
-                                                            priority="true"
-                                                            unoptimized="true"
-                                                        />
-                                                    ) : null}
-                                                </div>
-                                                <div className="TEXTBOX px-2 py-1 space-y-2 bg-white dark:bg-slate-700 h-24">
-                                                    <div className="ICON flex justify-start items-end mt-2">
-                                                        <span className="font-pop text-lg font-bold text-slate-700 dark:text-slate-300 truncate ... ">
-                                                            {nftList.asset.name}
-                                                        </span>
-                                                    </div>
-                                                    <div className="title-text-sm bg-slate-200 dark:bg-slate-800 text-right rounded-xl pr-4 p-1">
-                                                        <NumericFormat
-                                                            className=""
-                                                            value={nftList.total_price / 1000000000000000000}
-                                                            decimalScale={4}
-                                                            thousandSeparator=","
-                                                            displayType="text"
-                                                            suffix="ETH"
-                                                        />
-                                                    </div>
-                                                    <div className="absolute bottom-[74px] right-2">
-                                                        {nftList.asset.collection.image_url !== null ? (
-                                                            <Image
-                                                                src={nftList.asset.collection.image_url}
-                                                                alt="NFT Img"
-                                                                className="rounded-full border-4 border-white dark:border-slate-700"
-                                                                width={50}
-                                                                height={50}
-                                                                priority="true"
-                                                                unoptimized="true"
-                                                            />
-                                                        ) : null}
-                                                    </div>
-                                                </div>
-                                                <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
-                                                    Go to Dao
-                                                </div>
-                                            </div>
-                                        </>
-                                    ))}
-                                </>
-                            </>
-                        ) : selectedCollection === 3 ? (
-                            <>
-                                {nftData[3].events.map((nftList) => (
-                                    <>
-                                        <div className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52 ">
-                                            <div className="flex flex-col asepct-square overflow-hidden  items-center">
-                                                {nftList.asset.image_url !== null ? (
-                                                    <Image
-                                                        src={nftList.asset.image_url}
-                                                        alt="NFT Img"
-                                                        className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
-                                                        width={250}
-                                                        height={250}
-                                                        priority="true"
-                                                        unoptimized="true"
-                                                    />
-                                                ) : null}
-                                            </div>
-                                            <div className="TEXTBOX px-2 py-1 space-y-2 bg-white dark:bg-slate-700 h-24">
-                                                <div className="ICON flex justify-start items-end mt-2">
-                                                    <span className="font-pop text-lg font-bold text-slate-700 dark:text-slate-300 truncate ... ">
-                                                        {nftList.asset.name}
-                                                    </span>
-                                                </div>
-                                                <div className="title-text-sm bg-slate-200 dark:bg-slate-800 text-right rounded-xl pr-4 p-1">
-                                                    <NumericFormat
-                                                        className=""
-                                                        value={nftList.total_price / 1000000000000000000}
-                                                        decimalScale={4}
-                                                        thousandSeparator=","
-                                                        displayType="text"
-                                                        suffix="ETH"
-                                                    />
-                                                </div>
-                                                <div className="absolute bottom-[74px] right-2">
-                                                    {nftList.asset.collection.image_url !== null ? (
-                                                        <Image
-                                                            src={nftList.asset.collection.image_url}
-                                                            alt="NFT Img"
-                                                            className="rounded-full border-4 border-white dark:border-slate-700"
-                                                            width={50}
-                                                            height={50}
-                                                            priority="true"
-                                                            unoptimized="true"
-                                                        />
-                                                    ) : null}
-                                                </div>
-                                            </div>
-                                            <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
-                                                Go to Dao
-                                            </div>
-                                        </div>
-                                    </>
-                                ))}
-                            </>
-                        ) : null} */}
-            </div>
           </div>
         </section>
         <div className="my-20 sm:hidden"></div>

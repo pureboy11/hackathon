@@ -382,7 +382,7 @@ export default function DefenDaoDetail() {
                 {" "}
                 Latest DAO's Activity{" "}
               </div>
-              <div className="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-1 pt-10 gap-5 overflow-x-auto grid grid-flow-col items-center scroll-smooth w-[700px] h-68">
+              <div className="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-1 pt-10 gap-5 overflow-x-auto justify-start grid grid-flow-col items-center scroll-smooth w-[700px] h-68">
                 {loading ? (
                   <>
                     <div className="flex justify-center items-center py-10 p-2 animate-pulse font-def">
@@ -410,7 +410,7 @@ export default function DefenDaoDetail() {
                     <>
                       <div key={nftList.id}>
                         <div className="NFTCARDS relative overflow-hidden bg-inherit rounded-xl shadow-md transition-all mx-5 w-40">
-                          <div className="flex flex-col asepct-square overflow-hidden items-center relative h-32">
+                          <div className="flex flex-col asepct-square overflow-hidden items-center relative h-40">
                             {nftList.img !== null ? (
                               <Image
                                 src={nftList.img}
@@ -496,11 +496,11 @@ export default function DefenDaoDetail() {
                         value={inputTargetPrice}
                         onChange={onChange}
                         placeholder="Enter your target price."
-                        decimalScale={5}
+                        decimalScale={6}
                         thousandSeparator=","
                         displayType="input"
                         type="number"
-                        step={priceUnit}
+                        step={priceUnit /10 }
                       />
                       <div className="absolute right-2 top-1/4 flex items-center mr-2 text-slate-600">
                         <span>ETH</span>
