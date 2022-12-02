@@ -296,9 +296,9 @@ export default function Home() {
                                                                     <Image
                                                                         src="/Defendao_Logo.png"
                                                                         alt="No Img"
-                                                                        className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300 opacity-40 "
-                                                                        width={180}
-                                                                        height={180}
+                                                                        className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300 opacity-40 px-10 py-6"
+                                                                        width={250}
+                                                                        height={250}
                                                                         priority="true"
                                                                         unoptimized="true"
                                                                     />
