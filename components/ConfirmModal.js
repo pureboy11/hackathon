@@ -105,7 +105,7 @@ export default function ConfirmModal(props) {
                     />
                   </svg>
                   <span>Loading...</span>
-                  <div className="mt-5 text-center">blahkdsafqrr...</div>
+                  <div className="mt-5 text-center">in progress...</div>
                 </div>
               </div>
             </>
