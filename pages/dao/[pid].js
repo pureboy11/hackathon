@@ -501,7 +501,7 @@ export default function DefenDaoDetail() {
                                                         </div>
                                                         <div className="flex text-lg items-center pb-4">
                                                             <span className="block text-sm font-medium truncate ... whitespace-pre">
-                                                                {mynft.price} ETH
+                                                            {mynft.id} 
                                                             </span>
                                                         </div>
                                                     </div>
