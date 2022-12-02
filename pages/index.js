@@ -28,7 +28,7 @@ export default function Home() {
     "http://127.0.0.1:8545/"
   );
   const defenDaoFactory = new ethers.Contract(
-    "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
+    "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
     DefenDAOFactory,
     provider
   );
@@ -39,16 +39,17 @@ export default function Home() {
     setLoading(true);
     let tempData = [];
     let temp2Data = [];
-    let osData = [];
-    let statData = [];
-    let eventData = [];
-    let floorPrice = [];
 
-    const collist = await defenDaoFactory.getAllCollections();
-    const slugs = await defenDaoFactory.getAllSlugs();
+    const infos = await defenDaoFactory.getAllInfos();
 
     //opensea//
-    for (const [index, slug] of slugs.entries()) {
+    for (const [index, ddInfo] of infos.entries()) {
+      const nftAddress = ddInfo[0];
+      const ddAddress = ddInfo[1];
+      const nftSlug = ddInfo[2];
+      const ticketCount = ddInfo[3];
+      const unitPrice = ddInfo[4];
+
       const options = {
         method: "GET",
         headers: {
@@ -59,16 +60,16 @@ export default function Home() {
       };
 
       const res = await fetch(
-        "https://api.opensea.io/api/v1/collection/" + slug,
+        "https://api.opensea.io/api/v1/collection/" + nftSlug,
         options
       );
       const stat = await fetch(
-        "https://api.opensea.io/api/v1/collection/" + slug + "/stats",
+        "https://api.opensea.io/api/v1/collection/" + nftSlug + "/stats",
         options
       );
       const event = await fetch(
         "https://api.opensea.io/api/v1/events?collection_slug=" +
-          slug +
+          nftSlug +
           "&event_type=successful",
         options
       );
@@ -78,35 +79,33 @@ export default function Home() {
       const event_result = await event.json();
       const assetEvent = await event_result.asset_events;
 
-      osData[index] = os_result;
-      statData[index] = stat_result;
-      eventData[index] = assetEvent;
-    }
+      const unit = ethers.utils.formatEther(unitPrice);
+      const tvlCalc = ethers.utils.parseEther(unit).mul(ticketCount);
+      const tvlStr = ethers.utils.formatEther(tvlCalc);
 
-    // for (const [index, collectionAddress] of collist.entries()) {
-    //     const defenDAO = new ethers.Contract(collectionAddress, DefenDAO, provider);
-
-    //     floorPrice[index] = ethers.utils.formatEther(await defenDAO.curFloorPrice());
-    // }
-
-    //set DAOdata//
-    for (let i = 0; i < collist.length; i++) {
       tempData.push({
-        id: i,
-        slug: slugs[i],
-        address: collist[i],
-        opensea: osData[i],
-        stats: statData[i],
+        id: index,
+        slug: nftSlug,
+        nftaddr: nftAddress,
+        address: ddAddress,
+        opensea: os_result,
+        stats: stat_result,
+        ticketcount: Number(ticketCount),
+        tvl: tvlStr,
       });
       temp2Data.push({
-        id: i,
-        slug: slugs[i],
-        events: eventData[i],
-        address: collist[i],
-        opensea: osData[i],
-        stats: statData[i],
+        id: index,
+        slug: nftSlug,
+        nftaddr: nftAddress,
+        events: assetEvent,
+        address: ddAddress,
+        opensea: os_result,
+        stats: stat_result,
+        ticketcount: Number(ticketCount),
+        tvl: tvlStr,
       });
     }
+
     setdefendaData(tempData);
     setNftData(temp2Data);
     setLoading(false);
@@ -299,6 +298,7 @@ export default function Home() {
                               href={{
                                 pathname: `/dao/${nftList.asset.collection.name}`,
                                 query: {
+                                  nftAddress: nftList.nftaddr,
                                   address: nftList.asset.asset_contract.address,
                                   name: nftList.asset.collection.name,
                                   img: nftList.asset.collection.image_url,
@@ -641,9 +641,12 @@ export default function Home() {
                   <div className="col-span-3 m-auto font-def">
                     {daoList.opensea.collection.name}
                   </div>
-                  <div className="col-span-3 sm:col-span-1 m-auto"> 1412</div>
+                  <div className="col-span-3 sm:col-span-1 m-auto">
+                    {" "}
+                    {daoList.ticketcount}{" "}
+                  </div>
                   <div className="col-span-2 hidden sm:block m-auto">
-                    142,123 USDT{" "}
+                    {daoList.tvl} ETH{" "}
                   </div>
                   <div className="col-span-1 hidden sm:block m-auto">
                     {" "}
@@ -656,13 +659,13 @@ export default function Home() {
                         pathname: `/dao/${daoList.opensea.collection.name}`,
                         query: {
                           id: daoList.id,
+                          nftAddress: daoList.nftaddr,
                           address: daoList.address,
                           name: daoList.opensea.collection.name,
                           floorPrice: daoList.stats.stats.floor_price,
                           img: daoList.opensea.collection.image_url,
-                          marketCap : daoList.stats.stats.market_cap,
+                          marketCap: daoList.stats.stats.market_cap,
                           avgPrice: daoList.stats.stats.average_price,
-
                         },
                       }}
                       // as={`/dao/${daoList.opensea.collection.name}`}

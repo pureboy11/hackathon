@@ -31,7 +31,7 @@ export default function ClaimModal(props) {
           </svg>
         </button>
         <div className="mt-5 gap-4">
-          <div className="mt-4 bg-slate-700 p-4 w-40 rounded-xl mx-auto">
+          {/* <div className="mt-4 bg-slate-700 p-4 w-40 rounded-xl mx-auto">
             <NumericFormat
               className="text-white text-right"
               value={props.inputTargetPrice}
@@ -40,15 +40,15 @@ export default function ClaimModal(props) {
               displayType="text"
               suffix="ETH"
             />
-          </div>
+          </div> */}
           <div className="mt-4 bg-slate-700 p-4 w-40 rounded-xl mx-auto">
             <NumericFormat
               className="text-white text-right"
-              value={props.inputTicketCount}
+              value={props.claimableNFTs.length}
               decimalScale={0}
               thousandSeparator=","
               displayType="text"
-              suffix="Tickets"
+              suffix="NFTs"
             />{" "}
           </div>
         </div>
@@ -63,7 +63,7 @@ export default function ClaimModal(props) {
             className="dark:bg-slate-700 bg-slate-300 px-6 py-4 rounded-2xl"
             onClick={() => props.sendtoBlock()}
           >
-            Confirm bid
+            Claim NFT
           </button>
         </div>
       </div>
