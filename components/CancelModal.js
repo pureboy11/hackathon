@@ -28,12 +28,12 @@ export default function CancelModal(props) {
                 </button>
                 <div className="m-5 dark:bg-slate-600 bg-slate-100 rounded-md p-5">
                     <div className="flex items-center justify-between mb-5 px-4">
-                        <div>Ticket Price :</div>
+                        <div>Target Price :</div>
                         <div className="dark:bg-slate-800 bg-slate-600 p-2 pl-4 w-40 rounded-xl ml-auto">
                             <NumericFormat
                                 className="text-white text-right"
                                 value={props.inputTargetPrice}
-                                decimalScale={3}
+                                decimalScale={5}
                                 thousandSeparator=","
                                 displayType="text"
                                 suffix="ETH"
@@ -59,9 +59,9 @@ export default function CancelModal(props) {
                             <div className="text-xl">
                                 <NumericFormat
                                     className=""
-                                    value={props.inputTargetPrice * props.inputTicketCount}
+                                    value={props.priceUnit * props.inputTicketCount}
                                     prefix={""}
-                                    decimalScale={3}
+                                    decimalScale={5}
                                     thousandSeparator=","
                                     displayType="text"
                                 />{" "}
@@ -100,7 +100,7 @@ export default function CancelModal(props) {
                                     />
                                 </svg>
                                 <span>Loading...</span>
-                                <div className="mt-5 text-center">blahkdsafqrr...</div>
+                                <div className="mt-5 text-center">in progress...</div>
                             </div>
                         </div>
                     )}
