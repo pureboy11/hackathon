@@ -407,7 +407,6 @@ export default function DefenDaoDetail() {
                   </>
                 ) : (
                   nftpuller.map((nftList) => (
-                    <>
                       <div key={nftList.id}>
                         <div className="NFTCARDS relative overflow-hidden bg-inherit rounded-xl shadow-md transition-all mx-5 w-40">
                           <div className="flex flex-col asepct-square overflow-hidden items-center relative h-40">
@@ -442,7 +441,6 @@ export default function DefenDaoDetail() {
                           </div>
                         </div>
                       </div>
-                    </>
                   ))
                 )}
               </div>
@@ -676,7 +674,6 @@ export default function DefenDaoDetail() {
                   </>
                 ) : (
                   claimableNFTs.map((nftList) => (
-                    <>
                       <div
                         className="NFTCARDS relative overflow-hidden rounded-xl shadow-md h-32 grid grid-cols-7 bg-slate-100 dark:bg-slate-700"
                         key={nftList.id}
@@ -707,7 +704,6 @@ export default function DefenDaoDetail() {
                           </div> */}
                         </div>
                       </div>
-                    </>
                   ))
                 )}
               </div>
