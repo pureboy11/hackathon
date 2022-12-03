@@ -26,7 +26,7 @@ export default function Home() {
     );
     const provider = new ethers.providers.JsonRpcProvider(
       "http://127.0.0.1:8545/"
-      );
+    );
     const defenDaoFactory = new ethers.Contract(
         "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
         DefenDAOFactory,
@@ -34,7 +34,6 @@ export default function Home() {
     );
 
     //Collection Fetch//
-
     async function getCollection() {
         setLoading(true);
         let tempData = [];
@@ -63,10 +62,9 @@ export default function Home() {
               "https://api.opensea.io/api/v1/collection/" + nftSlug,
               options
             );
-            const stat = await fetch(
-              "https://api.opensea.io/api/v1/collection/" + nftSlug + "/stats",
-              options
-            );
+            const stat = await fetch("https://api.opensea.io/api/v1/collection/" + nftSlug + "/stats",
+            options
+          );
             const event = await fetch(
                 "https://api.opensea.io/api/v1/events?collection_slug=" +
                 nftSlug +
@@ -251,7 +249,7 @@ export default function Home() {
                             {defendaoData.map((nft) => (
                                 <button
                                     className={`green-Btn truncate ... ${
-                                        selectedCollection === nft.id ? "bg-green-40" : null
+                                        selectedCollection === nft.id ? "bg-green-400" : null
                                     }`}
                                     onClick={() => setSelectedCollection(nft.id)}
                                     key={nft.id}
@@ -268,98 +266,94 @@ export default function Home() {
                             </div>
                         ) : (
                             <>
-                                {defendaoData.map((nfts) => (
-                                    <>
-                                        {selectedCollection === nfts.id ? (
-                                            <div className="flex gap-10" key={nfts.id}>
-                                                {defendaoData[nfts.id].events.map((nftList) => (
-                                                    <Link
-                                                        className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
-                                                        key={nftList.id}
-                                                        href={{
-                                                            pathname: `/dao/${nfts.opensea.collection.name}`,
-                                                            query: {
-                                                                id: nfts.id,
-                                                                nftAddress: nfts.nftaddr,
-                                                                address: nfts.address,
-                                                                name: nfts.opensea.collection.name,
-                                                                floorPrice: nfts.stats.stats.floor_price,
-                                                                img: nfts.opensea.collection.image_url,
-                                                                marketCap: nfts.stats.stats.market_cap,
-                                                                avgPrice: nfts.stats.stats.average_price,
-                                                            },
-                                                        }}
-                                                    >
-                                                        <div className="flex flex-col asepct-square overflow-hidden items-center">
-                                                            {!nftList.asset.image_url ? (
-                                                                <div className="dark:bg-slate-800 bg-slate-400 w-full h-full flex items-center justify-center asepct-square">
-                                                                    <Image
-                                                                        src="/Defendao_Logo.png"
-                                                                        alt="No Img"
-                                                                        className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300 opacity-40 px-10 py-6"
-                                                                        width={250}
-                                                                        height={250}
-                                                                        priority="true"
-                                                                        unoptimized="true"
-                                                                    />
-                                                                </div>
-                                                            ) : (
+                                {defendaoData.map((nfts) =>
+                                    selectedCollection === nfts.id ? (
+                                        <div className="flex gap-10" key={nfts.id}>
+                                            {defendaoData[nfts.id].events.map((nftList) => (
+                                                <Link
+                                                    className="NFTCARDS relative hover:shadow-xl dark:hover:shadow-slate-700 dark:hover:shadow-lg overflow-hidden bg-inherit rounded-xl shadow-md transition-all cursor-pointer group w-52"
+                                                    key={nftList.id}
+                                                    href={{
+                                                        pathname: `/dao/${nfts.opensea.collection.name}`,
+                                                        query: {
+                                                            id: nfts.id,
+                                                            nftAddress: nfts.nftaddr,
+                                                            address: nfts.address,
+                                                            name: nfts.opensea.collection.name,
+                                                            floorPrice: nfts.stats.stats.floor_price,
+                                                            img: nfts.opensea.collection.image_url,
+                                                            marketCap: nfts.stats.stats.market_cap,
+                                                            avgPrice: nfts.stats.stats.average_price,
+                                                        },
+                                                    }}
+                                                >
+                                                    <div className="flex flex-col asepct-square overflow-hidden items-center">
+                                                        {!nftList.asset.image_url ? (
+                                                            <div className="dark:bg-slate-800 bg-slate-400 w-full h-full flex items-center justify-center asepct-square">
                                                                 <Image
-                                                                    src={
-                                                                        !nftList.asset.image_url
-                                                                            ? "/Defendao_Logo.png"
-                                                                            : nftList.asset.image_url
-                                                                    }
-                                                                    alt="NFT Img"
-                                                                    className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
+                                                                    src="/Defendao_Logo.png"
+                                                                    alt="No Img"
+                                                                    className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300 opacity-40 px-10 py-6"
                                                                     width={250}
                                                                     height={250}
                                                                     priority="true"
                                                                     unoptimized="true"
                                                                 />
-                                                            )}
-                                                        </div>
-                                                        <div className="TEXTBOX px-2 py-1 space-y-2 bg-white dark:bg-slate-700 h-24">
-                                                            <div className="ICON flex justify-start items-end mt-2">
-                                                                <span className="font-pop text-lg font-bold text-slate-700 dark:text-slate-300 truncate ... ">
-                                                                    {!nftList.asset.name
-                                                                        ? "NONAME"
-                                                                        : nftList.asset.name}
-                                                                </span>
                                                             </div>
-                                                            <div className="title-text-sm bg-slate-200 dark:bg-slate-800 text-right rounded-xl pr-4 p-1">
-                                                                <NumericFormat
-                                                                    className=""
-                                                                    value={nftList.total_price / 1000000000000000000}
-                                                                    decimalScale={4}
-                                                                    thousandSeparator=","
-                                                                    displayType="text"
-                                                                    suffix="ETH"
+                                                        ) : (
+                                                            <Image
+                                                                src={
+                                                                    !nftList.asset.image_url
+                                                                        ? "/Defendao_Logo.png"
+                                                                        : nftList.asset.image_url
+                                                                }
+                                                                alt="NFT Img"
+                                                                className="object-cover hover:scale-125 rounded-t-xl hover:rounded-t-xl group-hover:scale-125 transition-all duration-300"
+                                                                width={250}
+                                                                height={250}
+                                                                priority="true"
+                                                                unoptimized="true"
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <div className="TEXTBOX px-2 py-1 space-y-2 bg-white dark:bg-slate-700 h-24">
+                                                        <div className="ICON flex justify-start items-end mt-2">
+                                                            <span className="font-pop text-lg font-bold text-slate-700 dark:text-slate-300 truncate ... ">
+                                                                {!nftList.asset.name ? "NONAME" : nftList.asset.name}
+                                                            </span>
+                                                        </div>
+                                                        <div className="title-text-sm bg-slate-200 dark:bg-slate-800 text-right rounded-xl pr-4 p-1">
+                                                            <NumericFormat
+                                                                className=""
+                                                                value={nftList.total_price / 1000000000000000000}
+                                                                decimalScale={4}
+                                                                thousandSeparator=","
+                                                                displayType="text"
+                                                                suffix="ETH"
+                                                            />
+                                                        </div>
+                                                        <div className="absolute bottom-[74px] right-2">
+                                                            {nftList.asset.collection.image_url !== null ? (
+                                                                <Image
+                                                                    src={nftList.asset.collection.image_url}
+                                                                    alt="NFT Img"
+                                                                    className="rounded-full border-4 border-white dark:border-slate-400"
+                                                                    width={50}
+                                                                    height={50}
+                                                                    priority="true"
+                                                                    unoptimized="true"
                                                                 />
-                                                            </div>
-                                                            <div className="absolute bottom-[74px] right-2">
-                                                                {nftList.asset.collection.image_url !== null ? (
-                                                                    <Image
-                                                                        src={nftList.asset.collection.image_url}
-                                                                        alt="NFT Img"
-                                                                        className="rounded-full border-4 border-white dark:border-slate-400"
-                                                                        width={50}
-                                                                        height={50}
-                                                                        priority="true"
-                                                                        unoptimized="true"
-                                                                    />
-                                                                ) : null}
-                                                            </div>
+                                                            ) : null}
                                                         </div>
-                                                        <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
-                                                            Go to Dao
-                                                        </div>
-                                                    </Link>
-                                                ))}
-                                            </div>
-                                        ) : null}
-                                    </>
-                                ))}
+                                                    </div>
+                                                    <div className="absolute bottom-0 w-full bg-green-400 dark:bg-green-600 hidden group-hover:block text-center font-extrabold">
+                                                        Go to Dao
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    ) : null
+                                )}
                             </>
                         )}
                     </div>
