@@ -22,11 +22,11 @@ body {
 }
 
 .controller-box {
-  @apply mt-2 border border-slate-200 dark:border-slate-700 rounded-lg dark:bg-slate-900/30 bg-slate-200/30 text-gray-800 dark:text-gray-300 p-4 ring-1 ring-blue-500 hover:ring-2 hover:ring-blue-700 hover:shadow-lg hover:dark:shadow-slate-800 hover:shadow-slate-200
+  @apply mt-2 border border-slate-200 dark:border-slate-700 rounded-lg dark:bg-slate-900/60 bg-slate-200/30 text-gray-800 dark:text-gray-300 p-4 ring-1 ring-blue-500 hover:ring-2 hover:ring-blue-700 hover:shadow-lg hover:dark:shadow-slate-800 hover:shadow-slate-200
 }
 
 .controller-minibox {
-  @apply mt-2 border border-slate-200 dark:border-slate-700 rounded-lg dark:bg-slate-900/30 bg-slate-200/30 text-gray-800 dark:text-gray-300 p-4  hover:shadow-lg hover:dark:shadow-slate-800 hover:shadow-slate-200
+  @apply mt-2 border border-slate-200 dark:border-slate-700 rounded-lg dark:bg-slate-900/60 bg-slate-200/30 text-gray-800 dark:text-gray-300 p-4  hover:shadow-lg hover:dark:shadow-slate-800 hover:shadow-slate-200
 }
 
 .confirmBtn {
@@ -55,7 +55,7 @@ body {
 }
 
 .green-Btn {
- @apply bg-green-200 dark:bg-green-700/20 dark:focus:bg-green-700 focus:bg-green-400 p-2 font-def w-24 font-extrabold shadow-md rounded-lg hover:ring-2 dark:ring-green-900 ring-green-400 mr-4
+ @apply bg-green-200 dark:bg-green-700/20 dark:focus:bg-green-700 focus:bg-green-400 p-2 font-def w-48 font-extrabold shadow-md rounded-lg hover:ring-2 dark:ring-green-900 ring-green-400 mr-4
 }
 
 

@@ -38,8 +38,6 @@ export default class Chart extends React.Component {
       <>
         <Bar
           data={this.props.data}
-          width={200}
-          height={400}
           options={{ maintainAspectRatio: false }}
         />
       </>
