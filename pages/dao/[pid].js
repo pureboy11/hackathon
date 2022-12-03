@@ -265,7 +265,7 @@ export default function DefenDaoDetail() {
         const len = Math.floor(floorPrice / unit);
 
         let liq = BigNumber.from(0);
-        for (let i = len; i >= 1; i--) {
+        for (let i = 1; i <= len; i++) {
             const ticket = Number(await defenDAO.getAllOffers(ethers.utils.parseEther(unit).mul(i)));
             aud.labels.push(`${roundDown(unit * i, 5)} ETH`);
             aud.datasets[0].data.push(ticket);
